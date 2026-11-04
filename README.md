@@ -4,6 +4,10 @@ Aplicação web em **React** que consome a API **Asteroids - NeoWs** da NASA par
 
 Desenvolvida como parte do processo de recrutamento da Olos (vaga Front-End).
 
+🔭 **Demo ao vivo:** https://gagg223.github.io/astrowatch/
+
+> A demo publicada usa a `DEMO_KEY` da NASA (limite de requisições compartilhado). Se aparecer a mensagem de limite atingido (HTTP 429), aguarde alguns minutos ou rode localmente com a sua própria chave (ver seção [A API](#a-api)).
+
 ## Funcionalidades
 
 Atendendo ao que foi pedido no desafio:
