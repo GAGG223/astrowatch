@@ -6,7 +6,7 @@ Desenvolvida como parte do processo de recrutamento da Olos (vaga Front-End).
 
 🔭 **Demo ao vivo:** https://gagg223.github.io/astrowatch/
 
-> A demo publicada usa a `DEMO_KEY` da NASA (limite de requisições compartilhado). Se aparecer a mensagem de limite atingido (HTTP 429), aguarde alguns minutos ou rode localmente com a sua própria chave (ver seção [A API](#a-api)).
+> A demo publicada já vem configurada com uma API Key da NASA, então funciona sem nenhuma configuração. Ao rodar localmente, a aplicação usa a `DEMO_KEY` por padrão (ou a sua própria chave, se configurada — ver seção [A API](#a-api)).
 
 ## Funcionalidades
 
