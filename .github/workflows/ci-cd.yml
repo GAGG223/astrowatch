@@ -1,6 +1,6 @@
 # Pipeline do AstroWatch
 #
-# - Em todo push e pull request: instala dependencias, roda o lint e o build (CI).
+# - Em todo push e pull request: instala dependencias, roda lint, testes e build (CI).
 # - Em push na branch main: publica o build no GitHub Pages (CD).
 #
 # A chave da NASA vem do secret VITE_NASA_API_KEY. Se o secret nao existir
@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   build:
-    name: Lint e build
+    name: Lint, testes e build
     runs-on: ubuntu-latest
     steps:
       - name: Baixar o codigo
@@ -42,6 +42,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Testes
+        run: npm test
 
       - name: Build
         run: npm run build
