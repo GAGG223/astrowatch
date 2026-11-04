@@ -3,6 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "description": "AstroWatch - monitoramento de asteroides proximos a Terra usando a API Asteroids - NeoWs da NASA",
   "scripts": {
     "dev": "vite",

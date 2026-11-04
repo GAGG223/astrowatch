@@ -140,5 +140,5 @@ A chave é lida da variável de ambiente `VITE_NASA_API_KEY`. Quando ausente, a 
 
 - Datas são tratadas no fuso local e exibidas em pt-BR (DD/MM/AAAA); números usam `Intl`/`toLocaleString`.
 - A **busca por nome** é feita no cliente sobre o resultado já carregado; o **filtro por data** dispara uma nova requisição à API.
-- Scripts disponíveis: `dev`, `build`, `preview`, `lint`, `test` e `test:watch`.
+- Scripts disponíveis: `dev`, `build`, `preview`, `lint`, `test` e `test:watch`. Requer Node.js 22.22+ (exigência do jsdom usado nos testes).
 - Requisições à API são canceláveis (`AbortController`): ao disparar uma nova busca, a anterior é abortada, evitando que uma resposta antiga sobrescreva um resultado mais recente.
