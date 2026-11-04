@@ -56,8 +56,8 @@ Projeto desenvolvido para o processo de recrutamento da **Olos** (vaga Front-End
 | **React 18** | Biblioteca de UI | Exigida pelo desafio; componentes funcionais com Hooks. |
 | **TypeScript** | Linguagem | Tipa o contrato aninhado da API, reduz erros e serve de documentação. |
 | **Vite** | Build / dev server | Inicialização e HMR rápidos; sucessor do Create React App. |
-| **styled-components** | Estilização | CSS-in-JS com escopo isolado, tema central e estilos dinâmicos (ex.: cartão perigoso). |
-| **ESLint** | Qualidade | Padronização e código limpo (critério de avaliação). |
+| **styled-components** | Estilização | CSS-in-JS com escopo isolado, tema central e estilos dinâmicos. |
+| **ESLint** | Qualidade | Padronização e código limpo. |
 
 > O desafio exigia apenas **React + um framework de estilo**. TypeScript, Vite e styled-components foram escolhas complementares, permitidas e justificadas aqui.
 
