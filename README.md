@@ -8,6 +8,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![styled-components](https://img.shields.io/badge/styled--components-6-DB7093?logo=styled-components&logoColor=white)](https://styled-components.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-2-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![CI/CD](https://github.com/GAGG223/astrowatch/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GAGG223/astrowatch/actions/workflows/ci-cd.yml)
 
 ### [🚀 Acessar a demo ao vivo](https://gagg223.github.io/astrowatch/)
 
@@ -44,6 +46,8 @@ Projeto desenvolvido para o processo de recrutamento da **Olos** (vaga Front-End
 - **Recarga na virada do dia** — ao mudar o dia, a janela de 7 dias é atualizada automaticamente (com uma verificação leve de data, sem requisições desnecessárias).
 - **Resumo** com o total de asteroides e quantos são perigosos.
 - Velocidade relativa e link para a página oficial de cada objeto no JPL/NASA.
+- **Ordenação** (data, mais próximos ou maiores) e filtro para exibir **somente os perigosos**.
+- **Validação do intervalo de datas** no próprio formulário, evitando o erro 400 da API para períodos acima de 7 dias.
 - Estados de **carregamento, erro e vazio**, com tratamento amigável do limite de requisições (HTTP 429).
 - Interface com tema **universo/NASA** (fundo estrelado, tipografia espacial) e **layout responsivo**.
 
@@ -58,6 +62,8 @@ Projeto desenvolvido para o processo de recrutamento da **Olos** (vaga Front-End
 | **Vite** | Build / dev server | Inicialização e HMR rápidos; sucessor do Create React App. |
 | **styled-components** | Estilização | CSS-in-JS com escopo isolado, tema central e estilos dinâmicos. |
 | **ESLint** | Qualidade | Padronização e código limpo. |
+| **Vitest + Testing Library** | Testes | Testes unitários e de integração, rodando no mesmo ecossistema do Vite. |
+| **GitHub Actions** | CI/CD | Lint, testes e build a cada push/PR; deploy automático da `main` para o GitHub Pages. |
 
 > O desafio exigia apenas **React + um framework de estilo**. TypeScript, Vite e styled-components foram escolhas complementares, permitidas e justificadas aqui.
 
@@ -73,7 +79,8 @@ O código é organizado por **responsabilidade**, isolando a comunicação com a
 src/
 ├── components/             # Camada de apresentação (UI)
 │   ├── Header.tsx              # cabeçalho com logo da NASA e título
-│   ├── Filters.tsx             # busca por nome + filtro por data
+│   ├── Filters.tsx             # busca por nome + filtro por data (com validação)
+│   ├── ListControls.tsx        # ordenação + filtro "somente perigosos"
 │   ├── RefreshControl.tsx      # botão "atualizar agora" + última atualização
 │   ├── ResultsSummary.tsx      # resumo (total / perigosos)
 │   ├── AsteroidList.tsx        # grade de cartões
@@ -85,7 +92,8 @@ src/
 ├── services/
 │   └── nasaApi.ts              # chamada HTTP + normalização da resposta
 ├── types/                      # contrato da API NeoWs e modelo normalizado (Asteroid)
-├── utils/                      # helpers de data e formatação (pt-BR)
+├── utils/                      # datas, formatação (pt-BR) e regras de filtro/ordenação
+├── test/                       # setup, fixtures e helpers compartilhados pelos testes
 ├── styles/                     # tema, estilos globais e tipagem do styled-components
 ├── App.tsx                     # composição e orquestração geral
 └── main.tsx                    # ponto de entrada
@@ -97,9 +105,15 @@ src/
 2. O **hook** (`useAsteroids.ts`) gerencia o estado (dados, carregamento, erro, última atualização) e abstrai da tela *como* os dados chegam.
 3. Os **componentes** recebem dados prontos e apenas renderizam.
 
-Essa separação mantém o código testável, legível e fácil de evoluir.
+Essa separação mantém o código testável, legível e fácil de evoluir. Os testes ficam ao lado do código que cobrem (`*.test.ts` / `*.test.tsx`).
 
 ---
+
+## Testes e qualidade
+
+- **64 testes** (Vitest + React Testing Library), cobrindo normalização da API, validação de datas, filtro/ordenação, o hook de estado (incluindo cancelamento de requisições concorrentes) e os principais fluxos do usuário.
+- **CI/CD com GitHub Actions**: a cada push e pull request, o pipeline roda lint, testes e build; a cada push na `main`, publica automaticamente no GitHub Pages.
+- **Lighthouse**: Performance 94, Acessibilidade 100, Boas práticas 100, SEO 100 (build de produção).
 
 ## Documentação do código
 
@@ -126,4 +140,5 @@ A chave é lida da variável de ambiente `VITE_NASA_API_KEY`. Quando ausente, a 
 
 - Datas são tratadas no fuso local e exibidas em pt-BR (DD/MM/AAAA); números usam `Intl`/`toLocaleString`.
 - A **busca por nome** é feita no cliente sobre o resultado já carregado; o **filtro por data** dispara uma nova requisição à API.
-- Scripts disponíveis: `dev`, `build`, `preview`, `lint` e `deploy`.
+- Scripts disponíveis: `dev`, `build`, `preview`, `lint`, `test` e `test:watch`.
+- Requisições à API são canceláveis (`AbortController`): ao disparar uma nova busca, a anterior é abortada, evitando que uma resposta antiga sobrescreva um resultado mais recente.
