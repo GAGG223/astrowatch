@@ -53,7 +53,9 @@ const Head = styled.div`
   gap: 12px;
 `
 
-const Name = styled.h3`
+// h2 (e nao h3): a pagina tem um h1 no cabecalho, entao os titulos dos cards
+// seguem a hierarquia sem pular nivel (requisito de acessibilidade).
+const Name = styled.h2`
   font-family: 'Orbitron', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;

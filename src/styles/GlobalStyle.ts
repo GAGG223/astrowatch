@@ -6,8 +6,7 @@ import { createGlobalStyle } from 'styled-components'
  * estrelas desenhado com multiplos box-shadow (sem imagens externas).
  */
 export const GlobalStyle = createGlobalStyle`
-  /* Fontes: Orbitron (sci-fi, titulos) e Rajdhani (texto tecnologico) */
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+  /* As fontes (Orbitron e Rajdhani) sao carregadas em main.tsx via @fontsource. */
 
   *,
   *::before,

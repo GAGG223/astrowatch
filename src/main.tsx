@@ -11,6 +11,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
+// Fontes hospedadas junto com o app (sem depender do Google Fonts):
+// Orbitron para titulos e numeros, Rajdhani para o texto. So os pesos usados.
+import '@fontsource/orbitron/700.css'
+import '@fontsource/orbitron/900.css'
+import '@fontsource/rajdhani/400.css'
+import '@fontsource/rajdhani/500.css'
+import '@fontsource/rajdhani/600.css'
+import '@fontsource/rajdhani/700.css'
 import { App } from './App'
 import { GlobalStyle } from './styles/GlobalStyle'
 import { theme } from './styles/theme'
