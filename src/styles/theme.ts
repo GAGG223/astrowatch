@@ -33,6 +33,15 @@ export const theme = {
     dangerSurface: 'rgba(255, 90, 90, 0.14)',
     safe: '#4dd4a0',
   },
+  // Familias tipograficas (carregadas em main.tsx via @fontsource).
+  fonts: {
+    // Marca: titulo "AstroWatch" e logo.
+    brand: "'Orbitron', sans-serif",
+    // Destaques: nomes dos asteroides, numeros e botoes.
+    heading: "'Space Grotesk', 'Segoe UI', sans-serif",
+    // Texto corrido da interface.
+    body: "'Inter', 'Segoe UI', Roboto, sans-serif",
+  },
   radius: {
     sm: '8px',
     md: '14px',

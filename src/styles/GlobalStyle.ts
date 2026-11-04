@@ -6,7 +6,7 @@ import { createGlobalStyle } from 'styled-components'
  * estrelas desenhado com multiplos box-shadow (sem imagens externas).
  */
 export const GlobalStyle = createGlobalStyle`
-  /* As fontes (Orbitron e Rajdhani) sao carregadas em main.tsx via @fontsource. */
+  /* As fontes (Orbitron, Space Grotesk e Inter) sao carregadas em main.tsx via @fontsource. */
 
   *,
   *::before,
@@ -21,7 +21,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Rajdhani', 'Segoe UI', Roboto, sans-serif;
+    font-family: ${({ theme }) => theme.fonts.body};
     color: ${({ theme }) => theme.colors.text};
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;

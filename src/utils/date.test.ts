@@ -3,6 +3,7 @@ import {
   addDays,
   daysBetween,
   formatDateBR,
+  formatDayLabel,
   getLast7DaysRange,
   toApiDate,
   validateDateRange,
@@ -67,6 +68,23 @@ describe('validateDateRange', () => {
   it('recusa campos vazios', () => {
     expect(validateDateRange('', '2026-11-01')).toMatch(/Informe/)
     expect(validateDateRange('2026-11-01', '')).toMatch(/Informe/)
+  })
+})
+
+describe('formatDayLabel', () => {
+  const today = new Date(2026, 10, 4, 12, 0, 0) // quarta-feira, 04/11/2026
+
+  it('usa "Hoje" para a data atual', () => {
+    expect(formatDayLabel('2026-11-04', today)).toBe('Hoje, 04/11/2026')
+  })
+
+  it('usa "Ontem" para o dia anterior', () => {
+    expect(formatDayLabel('2026-11-03', today)).toBe('Ontem, 03/11/2026')
+  })
+
+  it('usa o dia da semana com inicial maiuscula para os demais dias', () => {
+    const label = formatDayLabel('2026-11-01', today)
+    expect(label).toMatch(/^Domingo, 01\/11\/2026$/)
   })
 })
 

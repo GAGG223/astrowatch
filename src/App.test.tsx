@@ -58,12 +58,40 @@ describe('App', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
-  it('ordena por data de aproximacao por padrao', async () => {
+  it('por padrao mostra o dia mais recente no topo', async () => {
     fetchMock.mockResolvedValue(asteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
 
-    expect(cardNames()).toEqual(['(2008 WY32)', '467351 (2003 KO2)', '(2021 CC)'])
+    expect(cardNames()).toEqual(['(2021 CC)', '467351 (2003 KO2)', '(2008 WY32)'])
+  })
+
+  it('separa os cards com um titulo para cada dia', async () => {
+    fetchMock.mockResolvedValue(asteroids)
+    renderWithTheme(<App />)
+    await screen.findAllByRole('article')
+
+    // Um titulo h2 por dia (3 dias distintos), do mais recente ao mais antigo.
+    const dayTitles = screen.getAllByRole('heading', { level: 2 })
+    expect(dayTitles.map((h) => h.textContent)).toEqual([
+      expect.stringContaining('03/11/2026'),
+      expect.stringContaining('02/11/2026'),
+      expect.stringContaining('01/11/2026'),
+    ])
+  })
+
+  it('sem agrupamento por dia nas outras ordenacoes', async () => {
+    fetchMock.mockResolvedValue(asteroids)
+    renderWithTheme(<App />)
+    await screen.findAllByRole('article')
+
+    fireEvent.change(screen.getByLabelText('Ordenar por'), {
+      target: { value: 'size' },
+    })
+
+    // Sem titulos de dia: os h2 passam a ser os proprios nomes dos asteroides.
+    expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(3)
+    expect(screen.queryByText(/02\/11\/2026 \(/)).not.toBeInTheDocument()
   })
 
   it('busca pelo nome sem nova requisicao', async () => {

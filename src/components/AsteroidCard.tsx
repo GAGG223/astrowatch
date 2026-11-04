@@ -13,6 +13,11 @@ import { formatDiameterKm, formatKm, formatVelocity } from '../utils/format'
 interface AsteroidCardProps {
   /** Asteroide ja normalizado a ser exibido no cartao. */
   asteroid: Asteroid
+  /**
+   * Nivel do titulo do cartao. Use 'h3' quando o cartao estiver dentro de um
+   * grupo com titulo h2 (ex.: agrupado por dia), mantendo a hierarquia correta.
+   */
+  headingLevel?: 'h2' | 'h3'
 }
 
 const Card = styled.article<{ $hazardous: boolean }>`
@@ -56,10 +61,10 @@ const Head = styled.div`
 // h2 (e nao h3): a pagina tem um h1 no cabecalho, entao os titulos dos cards
 // seguem a hierarquia sem pular nivel (requisito de acessibilidade).
 const Name = styled.h2`
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
   word-break: break-word;
   color: ${({ theme }) => theme.colors.text};
 `
@@ -119,11 +124,11 @@ const Footer = styled.div`
  * Cartao que exibe um asteroide com todos os dados exigidos pelo desafio:
  * nome, diametro min/max (km), distancia da Terra e aviso de perigo.
  */
-export function AsteroidCard({ asteroid }: AsteroidCardProps) {
+export function AsteroidCard({ asteroid, headingLevel = 'h2' }: AsteroidCardProps) {
   return (
     <Card $hazardous={asteroid.isHazardous}>
       <Head>
-        <Name>{asteroid.name}</Name>
+        <Name as={headingLevel}>{asteroid.name}</Name>
         {asteroid.isHazardous && (
           <HazardBadge title="Asteroide potencialmente perigoso">
             ⚠ Perigoso

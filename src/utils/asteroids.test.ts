@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { makeAsteroid } from '../test/fixtures'
-import { filterAndSortAsteroids } from './asteroids'
+import { filterAndSortAsteroids, groupByDay } from './asteroids'
 
 const asteroids = [
   makeAsteroid({
@@ -33,8 +33,8 @@ const ids = (list: ReturnType<typeof filterAndSortAsteroids>) =>
   list.map((a) => a.id)
 
 describe('filterAndSortAsteroids', () => {
-  it('sem filtros, ordena por data de aproximacao', () => {
-    expect(ids(filterAndSortAsteroids(asteroids, base))).toEqual(['b', 'a', 'c'])
+  it('sem filtros, ordena do dia mais recente para o mais antigo', () => {
+    expect(ids(filterAndSortAsteroids(asteroids, base))).toEqual(['c', 'a', 'b'])
   })
 
   it('busca pelo nome ignorando maiusculas e espacos nas pontas', () => {
@@ -51,7 +51,7 @@ describe('filterAndSortAsteroids', () => {
       ...base,
       onlyHazardous: true,
     })
-    expect(ids(result)).toEqual(['a', 'c'])
+    expect(ids(result)).toEqual(['c', 'a'])
   })
 
   it('combina busca e filtro de perigosos', () => {
@@ -77,5 +77,25 @@ describe('filterAndSortAsteroids', () => {
     const original = ids(asteroids)
     filterAndSortAsteroids(asteroids, { ...base, sortBy: 'size' })
     expect(ids(asteroids)).toEqual(original)
+  })
+})
+
+describe('groupByDay', () => {
+  it('agrupa por dia preservando a ordem da lista', () => {
+    const list = [
+      makeAsteroid({ id: '1', approachDate: '2026-11-03' }),
+      makeAsteroid({ id: '2', approachDate: '2026-11-03' }),
+      makeAsteroid({ id: '3', approachDate: '2026-11-02' }),
+    ]
+
+    const groups = groupByDay(list)
+
+    expect(groups.map((g) => g.date)).toEqual(['2026-11-03', '2026-11-02'])
+    expect(groups[0].asteroids.map((a) => a.id)).toEqual(['1', '2'])
+    expect(groups[1].asteroids.map((a) => a.id)).toEqual(['3'])
+  })
+
+  it('retorna lista vazia para entrada vazia', () => {
+    expect(groupByDay([])).toEqual([])
   })
 })

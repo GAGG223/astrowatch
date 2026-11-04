@@ -93,8 +93,8 @@ const SubmitButton = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.radius.sm};
   padding: 11px 24px;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.82rem;
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;

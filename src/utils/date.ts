@@ -63,6 +63,28 @@ export function validateDateRange(
 }
 
 /**
+ * Rotulo amigavel para o titulo de um dia na lista:
+ * "Hoje", "Ontem" ou o dia da semana seguido da data (ex.: "Sabado, 01/11/2026").
+ *
+ * @param isoDate data no formato YYYY-MM-DD
+ * @param today   referencia de "hoje" (injetavel para facilitar os testes)
+ */
+export function formatDayLabel(isoDate: string, today: Date = new Date()): string {
+  const todayIso = toApiDate(today)
+  const diff = daysBetween(isoDate, todayIso)
+  if (diff === 0) return `Hoje, ${formatDateBR(isoDate)}`
+  if (diff === 1) return `Ontem, ${formatDateBR(isoDate)}`
+
+  const [year, month, day] = isoDate.split('-').map(Number)
+  const weekday = new Date(year, month - 1, day).toLocaleDateString('pt-BR', {
+    weekday: 'long',
+  })
+  // Primeira letra maiuscula: "sabado" -> "Sabado".
+  const capitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1)
+  return `${capitalized}, ${formatDateBR(isoDate)}`
+}
+
+/**
  * Retorna o intervalo padrao dos ultimos 7 dias (incluindo hoje).
  * A API NeoWs aceita no maximo 7 dias entre start_date e end_date.
  */

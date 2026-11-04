@@ -38,7 +38,7 @@ const Logo = styled.div`
 `
 
 const Title = styled.h1`
-  font-family: 'Orbitron', sans-serif;
+  font-family: ${({ theme }) => theme.fonts.brand};
   font-size: 2rem;
   font-weight: 900;
   letter-spacing: 2px;

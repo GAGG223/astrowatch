@@ -31,10 +31,10 @@ const Count = styled.span`
   gap: 8px;
 
   strong {
-    font-family: 'Orbitron', sans-serif;
+    font-family: ${({ theme }) => theme.fonts.heading};
     color: ${({ theme }) => theme.colors.primary};
-    font-size: 1.4rem;
-    font-weight: 900;
+    font-size: 1.5rem;
+    font-weight: 700;
   }
 `
 

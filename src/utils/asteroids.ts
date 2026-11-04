@@ -11,7 +11,7 @@ export type SortKey = 'date' | 'distance' | 'size'
 
 /** Rotulos exibidos no seletor de ordenacao. */
 export const SORT_OPTIONS: ReadonlyArray<{ value: SortKey; label: string }> = [
-  { value: 'date', label: 'Data de aproximacao' },
+  { value: 'date', label: 'Mais recentes primeiro' },
   { value: 'distance', label: 'Mais proximos da Terra' },
   { value: 'size', label: 'Maiores primeiro' },
 ]
@@ -52,8 +52,33 @@ export function filterAndSortAsteroids(
         // Maior diametro maximo primeiro.
         return b.diameterMaxKm - a.diameterMaxKm
       default:
-        // Data de aproximacao (formato YYYY-MM-DD permite comparar como texto).
-        return a.approachDate.localeCompare(b.approachDate)
+        // Mais recentes primeiro: hoje no topo, depois os dias anteriores.
+        // (o formato YYYY-MM-DD permite comparar como texto)
+        return b.approachDate.localeCompare(a.approachDate)
     }
   })
+}
+
+/** Grupo de asteroides de um mesmo dia de aproximacao. */
+export interface DayGroup {
+  /** Data no formato YYYY-MM-DD. */
+  date: string
+  asteroids: Asteroid[]
+}
+
+/**
+ * Agrupa uma lista (ja ordenada) por dia de aproximacao, preservando a ordem
+ * em que os dias e os asteroides aparecem.
+ */
+export function groupByDay(asteroids: Asteroid[]): DayGroup[] {
+  const groups: DayGroup[] = []
+  for (const asteroid of asteroids) {
+    const last = groups[groups.length - 1]
+    if (last && last.date === asteroid.approachDate) {
+      last.asteroids.push(asteroid)
+    } else {
+      groups.push({ date: asteroid.approachDate, asteroids: [asteroid] })
+    }
+  }
+  return groups
 }
