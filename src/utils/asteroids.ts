@@ -6,12 +6,16 @@
  */
 import type { Asteroid } from '../types/nasa'
 
-/** Criterios de ordenacao disponiveis na interface. */
+/**
+ * Criterios de ordenacao disponiveis na interface.
+ * A lista e sempre agrupada por dia (mais recente no topo); o criterio
+ * escolhido define a ordem dos asteroides DENTRO de cada dia.
+ */
 export type SortKey = 'date' | 'distance' | 'size'
 
 /** Rotulos exibidos no seletor de ordenacao. */
 export const SORT_OPTIONS: ReadonlyArray<{ value: SortKey; label: string }> = [
-  { value: 'date', label: 'Mais recentes primeiro' },
+  { value: 'date', label: 'Padrao' },
   { value: 'distance', label: 'Mais proximos da Terra' },
   { value: 'size', label: 'Maiores primeiro' },
 ]
@@ -44,6 +48,12 @@ export function filterAndSortAsteroids(
   })
 
   return filtered.sort((a, b) => {
+    // 1o nivel (sempre): dia mais recente primeiro, hoje no topo.
+    // O formato YYYY-MM-DD permite comparar as datas como texto.
+    const byDay = b.approachDate.localeCompare(a.approachDate)
+    if (byDay !== 0) return byDay
+
+    // 2o nivel: criterio escolhido, aplicado dentro de cada dia.
     switch (sortBy) {
       case 'distance':
         // Menor distancia primeiro.
@@ -52,9 +62,8 @@ export function filterAndSortAsteroids(
         // Maior diametro maximo primeiro.
         return b.diameterMaxKm - a.diameterMaxKm
       default:
-        // Mais recentes primeiro: hoje no topo, depois os dias anteriores.
-        // (o formato YYYY-MM-DD permite comparar como texto)
-        return b.approachDate.localeCompare(a.approachDate)
+        // Mantem a ordem original dentro do dia (sort estavel).
+        return 0
     }
   })
 }

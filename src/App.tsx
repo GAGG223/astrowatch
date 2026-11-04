@@ -74,10 +74,8 @@ export function App() {
     if (loading) return <Loading />
     if (error) return <ErrorState message={error} />
     if (filteredAsteroids.length === 0) return <EmptyState />
-    // Na ordenacao por data, os cards aparecem separados por dia (hoje no topo).
-    return (
-      <AsteroidList asteroids={filteredAsteroids} groupByDate={sortBy === 'date'} />
-    )
+    // Os cards aparecem sempre separados por dia (hoje no topo).
+    return <AsteroidList asteroids={filteredAsteroids} />
   }
 
   return (

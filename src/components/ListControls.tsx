@@ -62,7 +62,8 @@ export function ListControls({
   return (
     <Bar>
       <Field>
-        Ordenar por
+        {/* A lista e sempre agrupada por dia; o criterio vale dentro de cada dia. */}
+        Ordenar cada dia por
         <Select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value as SortKey)}

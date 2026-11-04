@@ -40,6 +40,14 @@ const asteroids = [
   }),
 ]
 
+/** Dois dias com dois asteroides cada, para testar a ordenacao dentro do dia. */
+const sameDayAsteroids = [
+  makeAsteroid({ id: 'o1', name: '(ONTEM LONGE)', approachDate: '2026-11-03', missDistanceKm: 9e6, diameterMaxKm: 0.8 }),
+  makeAsteroid({ id: 'h1', name: '(HOJE LONGE)', approachDate: '2026-11-04', missDistanceKm: 7e6, diameterMaxKm: 0.9 }),
+  makeAsteroid({ id: 'o2', name: '(ONTEM PERTO)', approachDate: '2026-11-03', missDistanceKm: 1e6, diameterMaxKm: 0.1 }),
+  makeAsteroid({ id: 'h2', name: '(HOJE PERTO)', approachDate: '2026-11-04', missDistanceKm: 2e6, diameterMaxKm: 0.2 }),
+]
+
 /** Nomes dos cards na ordem em que aparecem na tela. */
 const cardNames = () =>
   screen.getAllByRole('article').map((card) => within(card).getByRole('heading').textContent)
@@ -80,18 +88,23 @@ describe('App', () => {
     ])
   })
 
-  it('sem agrupamento por dia nas outras ordenacoes', async () => {
-    fetchMock.mockResolvedValue(asteroids)
+  it('mantem a separacao por dia ao mudar a ordenacao', async () => {
+    fetchMock.mockResolvedValue(sameDayAsteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
 
-    fireEvent.change(screen.getByLabelText('Ordenar por'), {
+    fireEvent.change(screen.getByLabelText('Ordenar cada dia por'), {
       target: { value: 'size' },
     })
 
-    // Sem titulos de dia: os h2 passam a ser os proprios nomes dos asteroides.
-    expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(3)
-    expect(screen.queryByText(/02\/11\/2026 \(/)).not.toBeInTheDocument()
+    // Continuam os titulos dos 2 dias, com o mais recente primeiro.
+    const dayTitles = screen.getAllByRole('heading', { level: 2 })
+    expect(dayTitles.map((h) => h.textContent)).toEqual([
+      expect.stringContaining('04/11/2026'),
+      expect.stringContaining('03/11/2026'),
+    ])
+    // Dentro de cada dia, o maior primeiro.
+    expect(cardNames()).toEqual(['(HOJE LONGE)', '(HOJE PERTO)', '(ONTEM LONGE)', '(ONTEM PERTO)'])
   })
 
   it('busca pelo nome sem nova requisicao', async () => {
@@ -117,16 +130,17 @@ describe('App', () => {
     expect(cardNames()).toEqual(['467351 (2003 KO2)'])
   })
 
-  it('reordena pelos mais proximos da Terra', async () => {
-    fetchMock.mockResolvedValue(asteroids)
+  it('reordena pelos mais proximos dentro de cada dia', async () => {
+    fetchMock.mockResolvedValue(sameDayAsteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
 
-    fireEvent.change(screen.getByLabelText('Ordenar por'), {
+    fireEvent.change(screen.getByLabelText('Ordenar cada dia por'), {
       target: { value: 'distance' },
     })
 
-    expect(cardNames()).toEqual(['(2021 CC)', '467351 (2003 KO2)', '(2008 WY32)'])
+    // Hoje (04/11) continua no topo; dentro de cada dia, o mais proximo primeiro.
+    expect(cardNames()).toEqual(['(HOJE PERTO)', '(HOJE LONGE)', '(ONTEM PERTO)', '(ONTEM LONGE)'])
   })
 
   it('mostra o estado vazio quando a busca nao encontra nada', async () => {

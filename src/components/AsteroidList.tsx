@@ -2,8 +2,8 @@
  * AsteroidList — renderiza a grade (grid) de asteroides.
  *
  * Componente de apresentacao: recebe a lista ja pronta via props e delega a
- * exibicao de cada item ao AsteroidCard. Quando `groupByDate` e true, separa os
- * cards por dia de aproximacao, com um titulo para cada dia ("Hoje", "Ontem"...).
+ * exibicao de cada item ao AsteroidCard. Os cards sao sempre separados por dia
+ * de aproximacao, com um titulo para cada dia ("Hoje", "Ontem"...).
  */
 import styled from 'styled-components'
 import type { Asteroid } from '../types/nasa'
@@ -12,10 +12,8 @@ import { formatDayLabel } from '../utils/date'
 import { AsteroidCard } from './AsteroidCard'
 
 interface AsteroidListProps {
-  /** Lista de asteroides ja filtrada/ordenada a ser exibida. */
+  /** Lista de asteroides ja filtrada e ordenada (dia mais recente primeiro). */
   asteroids: Asteroid[]
-  /** Agrupa os cards por dia, na ordem em que os dias aparecem na lista. */
-  groupByDate?: boolean
 }
 
 /**
@@ -64,18 +62,7 @@ const DayCount = styled.span`
   color: ${({ theme }) => theme.colors.textMuted};
 `
 
-export function AsteroidList({ asteroids, groupByDate = false }: AsteroidListProps) {
-  if (!groupByDate) {
-    return (
-      <Grid>
-        {/* key={asteroid.id} ajuda o React a reconciliar a lista de forma eficiente. */}
-        {asteroids.map((asteroid) => (
-          <AsteroidCard key={asteroid.id} asteroid={asteroid} />
-        ))}
-      </Grid>
-    )
-  }
-
+export function AsteroidList({ asteroids }: AsteroidListProps) {
   return (
     <Groups>
       {groupByDay(asteroids).map((group) => (
