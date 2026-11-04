@@ -8,7 +8,9 @@ interface AsteroidCardProps {
 }
 
 const Card = styled.article<{ $hazardous: boolean }>`
+  position: relative;
   background: ${({ theme }) => theme.colors.surface};
+  backdrop-filter: blur(10px);
   border: 1px solid
     ${({ theme, $hazardous }) =>
       $hazardous ? theme.colors.danger : theme.colors.border};
@@ -20,7 +22,20 @@ const Card = styled.article<{ $hazardous: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: ${({ theme }) => theme.shadow.card};
+  box-shadow: ${({ theme, $hazardous }) =>
+    $hazardous ? theme.shadow.glowDanger : theme.shadow.card};
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: ${({ theme, $hazardous }) =>
+      $hazardous ? theme.colors.danger : theme.colors.borderStrong};
+    box-shadow: ${({ theme, $hazardous }) =>
+      $hazardous ? theme.shadow.glowDanger : theme.shadow.glow};
+  }
 `
 
 const Head = styled.div`
@@ -31,9 +46,12 @@ const Head = styled.div`
 `
 
 const Name = styled.h3`
-  font-size: 1.15rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
   font-weight: 700;
+  letter-spacing: 0.5px;
   word-break: break-word;
+  color: ${({ theme }) => theme.colors.text};
 `
 
 const HazardBadge = styled.span`

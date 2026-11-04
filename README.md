@@ -1,4 +1,4 @@
-# Asteroides NeoWs — NASA
+# AstroWatch
 
 Aplicação web em **React** que consome a API **Asteroids - NeoWs** da NASA para listar os asteroides que se aproximaram da Terra em um intervalo de até 7 dias.
 
@@ -17,7 +17,14 @@ Atendendo ao que foi pedido no desafio:
   - Distância que ele passou da Terra
   - Aviso visual quando o asteroide é **potencialmente perigoso**
 
-Extras para usabilidade: resumo com total de asteroides e quantos são perigosos, velocidade relativa, link para a página do objeto no JPL/NASA, estados de carregamento/erro/vazio e layout responsivo.
+Extras para usabilidade:
+
+- **Atualizar agora** — botão que refaz a busca na API sob demanda, com indicador da data/hora da última atualização.
+- **Atualização na virada do dia** — quando o dia muda, a lista é recarregada automaticamente para a nova janela de 7 dias (sem requisições desnecessárias: apenas uma verificação leve de data).
+- Resumo com total de asteroides e quantos são perigosos.
+- Velocidade relativa e link para a página do objeto no JPL/NASA.
+- Estados de carregamento, erro e vazio; tratamento amigável do limite de requisições (HTTP 429).
+- Tema visual "universo/NASA" (fundo estrelado, logo da NASA, tipografia espacial) e layout responsivo.
 
 ## Tecnologias e decisões
 
@@ -26,7 +33,7 @@ Extras para usabilidade: resumo com total de asteroides e quantos são perigosos
 | **React 18** | Exigido pelo desafio. |
 | **TypeScript** | Tipagem da resposta da API reduz erros e documenta o contrato de dados. |
 | **Vite** | Build e dev server rápidos, setup enxuto. |
-| **styled-components** | "Qualquer framework de estilo" era permitido; CSS-in-JS mantém estilo e componente coesos, com tema centralizado (identidade visual da Olos). |
+| **styled-components** | "Qualquer framework de estilo" era permitido; CSS-in-JS mantém estilo e componente coesos, com tema centralizado (paleta universo/NASA). |
 | **ESLint** | Garante o critério de código limpo. |
 
 A aplicação usa apenas a `fetch` nativa (sem cliente HTTP extra), mantendo as dependências mínimas.
@@ -35,14 +42,24 @@ A aplicação usa apenas a `fetch` nativa (sem cliente HTTP extra), mantendo as 
 
 ```
 src/
-├── components/     # Componentes de UI (Header, Filters, AsteroidCard, ...)
-├── hooks/          # useAsteroids: estado e ciclo de vida da busca
-├── services/       # nasaApi: chamada HTTP e normalização da resposta
-├── styles/         # tema, estilos globais e tipagem do styled-components
-├── types/          # tipagem da API NeoWs e modelo normalizado (Asteroid)
-├── utils/          # helpers de data e formatação (pt-BR)
-├── App.tsx         # composição e orquestração dos filtros + lista
-└── main.tsx        # ponto de entrada
+├── components/         # Componentes de UI
+│   ├── Header.tsx          # cabeçalho com logo da NASA e título
+│   ├── Filters.tsx         # busca por nome + filtro por data
+│   ├── RefreshControl.tsx  # botão "atualizar agora" + última atualização
+│   ├── ResultsSummary.tsx  # resumo (total / perigosos)
+│   ├── AsteroidList.tsx     # grade de cartões
+│   ├── AsteroidCard.tsx     # cartão de um asteroide
+│   └── StatusMessage.tsx    # estados de loading / erro / vazio
+├── hooks/
+│   ├── useAsteroids.ts     # estado e ciclo de vida da busca
+│   └── useDayChange.ts     # dispara recarga na virada do dia
+├── services/
+│   └── nasaApi.ts          # chamada HTTP e normalização da resposta
+├── styles/                 # tema, estilos globais e tipagem do styled-components
+├── types/                  # tipagem da API NeoWs e modelo normalizado (Asteroid)
+├── utils/                  # helpers de data e formatação (pt-BR)
+├── App.tsx                 # composição e orquestração geral
+└── main.tsx                # ponto de entrada
 ```
 
 A resposta bruta da API agrupa os asteroides por data; o serviço achata tudo em uma única lista e normaliza cada objeto para o modelo `Asteroid`, expondo para a UI apenas os campos necessários.

@@ -3,9 +3,11 @@ import styled from 'styled-components'
 import { AsteroidList } from './components/AsteroidList'
 import { Filters } from './components/Filters'
 import { Header } from './components/Header'
+import { RefreshControl } from './components/RefreshControl'
 import { ResultsSummary } from './components/ResultsSummary'
 import { EmptyState, ErrorState, Loading } from './components/StatusMessage'
 import { useAsteroids } from './hooks/useAsteroids'
+import { useDayChange } from './hooks/useDayChange'
 import { getLast7DaysRange } from './utils/date'
 
 const Main = styled.main`
@@ -14,17 +16,33 @@ const Main = styled.main`
   padding: 28px 20px 60px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 `
 
 const initialRange = getLast7DaysRange()
 
-/** Componente raiz: orquestra filtros, busca e renderizacao da lista. */
+/** Componente raiz: orquestra filtros, busca, atualizacao e a lista. */
 export function App() {
-  const { asteroids, loading, error, search } = useAsteroids()
+  const {
+    asteroids,
+    loading,
+    refreshing,
+    error,
+    lastUpdated,
+    search,
+    refresh,
+    reloadLatest,
+  } = useAsteroids()
 
   const [searchTerm, setSearchTerm] = useState('')
   const [range, setRange] = useState(initialRange)
+
+  // Na virada do dia, recarrega os ultimos 7 dias a partir da nova data.
+  useDayChange(() => {
+    const latest = getLast7DaysRange()
+    setRange(latest)
+    reloadLatest()
+  })
 
   // Busca por nome aplicada no cliente sobre o resultado ja carregado.
   const filteredAsteroids = useMemo(() => {
@@ -61,6 +79,12 @@ export function App() {
           startDate={range.startDate}
           endDate={range.endDate}
           loading={loading}
+        />
+
+        <RefreshControl
+          refreshing={refreshing}
+          lastUpdated={lastUpdated}
+          onRefreshNow={refresh}
         />
 
         {!loading && !error && (

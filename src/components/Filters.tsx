@@ -21,8 +21,10 @@ const Form = styled.form`
   gap: 16px;
   align-items: end;
   background: ${({ theme }) => theme.colors.surface};
+  backdrop-filter: blur(10px);
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.md};
+  box-shadow: ${({ theme }) => theme.shadow.card};
   padding: 20px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
@@ -64,17 +66,27 @@ const Input = styled.input`
 `
 
 const SubmitButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
+  background: linear-gradient(
+    135deg,
+    ${({ theme }) => theme.colors.primaryDark},
+    ${({ theme }) => theme.colors.accent}
+  );
   color: #fff;
   border: none;
   border-radius: ${({ theme }) => theme.radius.sm};
-  padding: 11px 22px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: background 0.15s ease;
+  padding: 11px 24px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition:
+    filter 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.colors.primaryDark};
+    filter: brightness(1.15);
+    box-shadow: ${({ theme }) => theme.shadow.glow};
   }
 
   &:disabled {

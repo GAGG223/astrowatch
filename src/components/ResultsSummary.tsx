@@ -8,16 +8,25 @@ interface ResultsSummaryProps {
 const Bar = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 24px;
+  gap: 10px 28px;
   align-items: center;
   color: ${({ theme }) => theme.colors.textMuted};
   font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
 `
 
 const Count = styled.span`
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+
   strong {
-    color: ${({ theme }) => theme.colors.text};
-    font-size: 1.05rem;
+    font-family: 'Orbitron', sans-serif;
+    color: ${({ theme }) => theme.colors.primary};
+    font-size: 1.4rem;
+    font-weight: 900;
   }
 `
 

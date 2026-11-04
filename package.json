@@ -1,9 +1,9 @@
 {
-  "name": "asteroides-neows",
+  "name": "astrowatch",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Listagem de asteroides proximos a Terra usando a API Asteroids - NeoWs da NASA",
+  "description": "AstroWatch - monitoramento de asteroides proximos a Terra usando a API Asteroids - NeoWs da NASA",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
