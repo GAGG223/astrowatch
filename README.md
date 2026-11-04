@@ -1,111 +1,129 @@
-# AstroWatch
+<div align="center">
 
-Aplicação web em **React** que consome a API **Asteroids - NeoWs** da NASA para listar os asteroides que se aproximaram da Terra em um intervalo de até 7 dias.
+# 🔭 AstroWatch
 
-Desenvolvida como parte do processo de recrutamento da Olos (vaga Front-End).
+**Monitoramento de asteroides próximos à Terra em tempo real, com dados da API Asteroids NeoWs da NASA.**
 
-🔭 **Demo ao vivo:** https://gagg223.github.io/astrowatch/
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![styled-components](https://img.shields.io/badge/styled--components-6-DB7093?logo=styled-components&logoColor=white)](https://styled-components.com/)
 
-> A demo publicada já vem configurada com uma API Key da NASA, então funciona sem nenhuma configuração. Ao rodar localmente, a aplicação usa a `DEMO_KEY` por padrão (ou a sua própria chave, se configurada — ver seção [A API](#a-api)).
+### [🚀 Acessar a demo ao vivo](https://gagg223.github.io/astrowatch/)
+
+</div>
+
+---
+
+## Visão geral
+
+O **AstroWatch** consome a API **Asteroids - NeoWs** da NASA para listar os asteroides que se aproximaram da Terra em uma janela de até 7 dias. Para cada objeto, apresenta tamanho estimado, distância da aproximação e um alerta quando ele é classificado como potencialmente perigoso.
+
+Projeto desenvolvido para o processo de recrutamento da **Olos** (vaga Front-End).
+
+> A demo publicada já vem configurada com uma API Key da NASA e funciona sem nenhuma configuração.
+
+---
 
 ## Funcionalidades
 
-Atendendo ao que foi pedido no desafio:
+**Requisitos do desafio**
 
-- **Lista dos asteroides dos últimos 7 dias** — carregada automaticamente ao abrir a aplicação.
-- **Filtro por data** — selecione um intervalo de data inicial e final (a API aceita no máximo 7 dias entre elas).
-- **Busca pelo nome do asteroide** — filtro instantâneo aplicado sobre a lista carregada.
-- **Cada item da lista exibe:**
-  - Nome do asteroide
-  - Estimativa de diâmetro mínima e máxima (em quilômetros)
-  - Distância que ele passou da Terra
-  - Aviso visual quando o asteroide é **potencialmente perigoso**
+- **Listagem dos últimos 7 dias** — carregada automaticamente ao abrir.
+- **Filtro por data** — seleção de um intervalo de início e fim (a API aceita no máximo 7 dias entre as datas).
+- **Busca por nome** — filtro instantâneo sobre a lista carregada.
+- **Cartão de cada asteroide** com:
+  - Nome
+  - Diâmetro estimado (mínimo e máximo, em km)
+  - Distância da aproximação com a Terra
+  - Alerta visual de **potencialmente perigoso**
 
-Extras para usabilidade:
+**Diferenciais**
 
-- **Atualizar agora** — botão que refaz a busca na API sob demanda, com indicador da data/hora da última atualização.
-- **Atualização na virada do dia** — quando o dia muda, a lista é recarregada automaticamente para a nova janela de 7 dias (sem requisições desnecessárias: apenas uma verificação leve de data).
-- Resumo com total de asteroides e quantos são perigosos.
-- Velocidade relativa e link para a página do objeto no JPL/NASA.
-- Estados de carregamento, erro e vazio; tratamento amigável do limite de requisições (HTTP 429).
-- Tema visual "universo/NASA" (fundo estrelado, logo da NASA, tipografia espacial) e layout responsivo.
+- **Atualizar agora** — refaz a busca sob demanda, exibindo a data/hora da última atualização.
+- **Recarga na virada do dia** — ao mudar o dia, a janela de 7 dias é atualizada automaticamente (com uma verificação leve de data, sem requisições desnecessárias).
+- **Resumo** com o total de asteroides e quantos são perigosos.
+- Velocidade relativa e link para a página oficial de cada objeto no JPL/NASA.
+- Estados de **carregamento, erro e vazio**, com tratamento amigável do limite de requisições (HTTP 429).
+- Interface com tema **universo/NASA** (fundo estrelado, tipografia espacial) e **layout responsivo**.
+
+---
 
 ## Tecnologias e decisões
 
-| Tecnologia | Motivo |
-| --- | --- |
-| **React 18** | Exigido pelo desafio. |
-| **TypeScript** | Tipagem da resposta da API reduz erros e documenta o contrato de dados. |
-| **Vite** | Build e dev server rápidos, setup enxuto. |
-| **styled-components** | "Qualquer framework de estilo" era permitido; CSS-in-JS mantém estilo e componente coesos, com tema centralizado (paleta universo/NASA). |
-| **ESLint** | Garante o critério de código limpo. |
+| Tecnologia | Papel | Por quê |
+| --- | --- | --- |
+| **React 18** | Biblioteca de UI | Exigida pelo desafio; componentes funcionais com Hooks. |
+| **TypeScript** | Linguagem | Tipa o contrato aninhado da API, reduz erros e serve de documentação. |
+| **Vite** | Build / dev server | Inicialização e HMR rápidos; sucessor do Create React App. |
+| **styled-components** | Estilização | CSS-in-JS com escopo isolado, tema central e estilos dinâmicos (ex.: cartão perigoso). |
+| **ESLint** | Qualidade | Padronização e código limpo (critério de avaliação). |
 
-A aplicação usa apenas a `fetch` nativa (sem cliente HTTP extra), mantendo as dependências mínimas.
+> O desafio exigia apenas **React + um framework de estilo**. TypeScript, Vite e styled-components foram escolhas complementares, permitidas e justificadas aqui.
 
-### Organização do código
+A comunicação com a API usa a `fetch` nativa, sem cliente HTTP adicional, mantendo as dependências mínimas.
+
+---
+
+## Arquitetura
+
+O código é organizado por **responsabilidade**, isolando a comunicação com a API, o gerenciamento de estado e a camada de apresentação.
 
 ```
 src/
-├── components/         # Componentes de UI
-│   ├── Header.tsx          # cabeçalho com logo da NASA e título
-│   ├── Filters.tsx         # busca por nome + filtro por data
-│   ├── RefreshControl.tsx  # botão "atualizar agora" + última atualização
-│   ├── ResultsSummary.tsx  # resumo (total / perigosos)
-│   ├── AsteroidList.tsx     # grade de cartões
-│   ├── AsteroidCard.tsx     # cartão de um asteroide
-│   └── StatusMessage.tsx    # estados de loading / erro / vazio
+├── components/             # Camada de apresentação (UI)
+│   ├── Header.tsx              # cabeçalho com logo da NASA e título
+│   ├── Filters.tsx             # busca por nome + filtro por data
+│   ├── RefreshControl.tsx      # botão "atualizar agora" + última atualização
+│   ├── ResultsSummary.tsx      # resumo (total / perigosos)
+│   ├── AsteroidList.tsx        # grade de cartões
+│   ├── AsteroidCard.tsx        # cartão de um asteroide
+│   └── StatusMessage.tsx       # estados de loading / erro / vazio
 ├── hooks/
-│   ├── useAsteroids.ts     # estado e ciclo de vida da busca
-│   └── useDayChange.ts     # dispara recarga na virada do dia
+│   ├── useAsteroids.ts         # estado e ciclo de vida da busca
+│   └── useDayChange.ts         # dispara a recarga na virada do dia
 ├── services/
-│   └── nasaApi.ts          # chamada HTTP e normalização da resposta
-├── styles/                 # tema, estilos globais e tipagem do styled-components
-├── types/                  # tipagem da API NeoWs e modelo normalizado (Asteroid)
-├── utils/                  # helpers de data e formatação (pt-BR)
-├── App.tsx                 # composição e orquestração geral
-└── main.tsx                # ponto de entrada
+│   └── nasaApi.ts              # chamada HTTP + normalização da resposta
+├── types/                      # contrato da API NeoWs e modelo normalizado (Asteroid)
+├── utils/                      # helpers de data e formatação (pt-BR)
+├── styles/                     # tema, estilos globais e tipagem do styled-components
+├── App.tsx                     # composição e orquestração geral
+└── main.tsx                    # ponto de entrada
 ```
 
-A resposta bruta da API agrupa os asteroides por data; o serviço achata tudo em uma única lista e normaliza cada objeto para o modelo `Asteroid`, expondo para a UI apenas os campos necessários.
+**Fluxo dos dados**
+
+1. O **service** (`nasaApi.ts`) é a única camada que conhece a API da NASA. A resposta vem agrupada por data e com campos aninhados; ele achata tudo em uma lista e **normaliza** cada item para o modelo `Asteroid`, expondo à UI apenas o necessário.
+2. O **hook** (`useAsteroids.ts`) gerencia o estado (dados, carregamento, erro, última atualização) e abstrai da tela *como* os dados chegam.
+3. Os **componentes** recebem dados prontos e apenas renderizam.
+
+Essa separação mantém o código testável, legível e fácil de evoluir.
+
+---
+
+## Documentação do código
+
+Todo o código-fonte é documentado com **JSDoc** e comentários explicativos:
+
+- Funções, hooks e serviços descrevem propósito, parâmetros e retorno.
+- As `interfaces` em `types/` documentam o contrato de dados da API e o modelo interno.
+- Comentários pontuais explicam decisões não óbvias (ex.: por que a busca por nome é feita no cliente e o filtro de data vai à API).
+
+---
 
 ## A API
 
-- Documentação e geração da API Key: https://api.nasa.gov/ (seção **Asteroids NeoWs**)
-- Endpoint utilizado: `GET /neo/rest/v1/feed?start_date=...&end_date=...&api_key=...`
+- **Fonte:** API Asteroids NeoWs da NASA — documentação e geração de chave em https://api.nasa.gov/
+- **Endpoint:** `GET /neo/rest/v1/feed?start_date=...&end_date=...&api_key=...`
 
-Por padrão a aplicação usa a `DEMO_KEY`, que tem um limite baixo de requisições. Para evitar o erro de limite (HTTP 429), gere sua própria chave e configure-a:
+A chave é lida da variável de ambiente `VITE_NASA_API_KEY`. Quando ausente, a aplicação usa automaticamente a `DEMO_KEY` pública da NASA (limite de requisições menor). Para configurar uma chave própria, copie `.env.example` para `.env` e preencha o valor.
 
-1. Copie `.env.example` para `.env`
-2. Preencha `VITE_NASA_API_KEY` com a sua chave
+> O arquivo `.env` está no `.gitignore` e nunca é versionado. O `.env.example` documenta a variável esperada sem expor segredos.
 
-```
-VITE_NASA_API_KEY=suachaveaqui
-```
+---
 
-> O arquivo `.env` está no `.gitignore` para não versionar a chave.
+## Observações técnicas
 
-## Como rodar
-
-Pré-requisitos: Node.js 18+ e npm.
-
-```bash
-# instalar dependências
-npm install
-
-# ambiente de desenvolvimento (http://localhost:5173)
-npm run dev
-
-# build de produção
-npm run build
-
-# pré-visualizar o build
-npm run preview
-
-# análise estática
-npm run lint
-```
-
-## Observações
-
-- As datas são tratadas no fuso local e exibidas no formato brasileiro (DD/MM/YYYY); números são formatados com `Intl`/`toLocaleString` em pt-BR.
-- A busca por nome é feita no cliente sobre o resultado já carregado; o filtro por data dispara uma nova requisição à API.
+- Datas são tratadas no fuso local e exibidas em pt-BR (DD/MM/AAAA); números usam `Intl`/`toLocaleString`.
+- A **busca por nome** é feita no cliente sobre o resultado já carregado; o **filtro por data** dispara uma nova requisição à API.
+- Scripts disponíveis: `dev`, `build`, `preview`, `lint` e `deploy`.

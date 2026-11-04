@@ -1,5 +1,13 @@
+/**
+ * StatusMessage — componentes de estado da tela.
+ *
+ * Agrupa as tres telas "de transicao" que substituem a lista quando ela nao
+ * pode ser exibida: carregando, erro e vazio. Usa atributos ARIA
+ * (role="status" / role="alert") para que leitores de tela anunciem o estado.
+ */
 import styled from 'styled-components'
 
+// Caixa base centralizada, reutilizada pelos tres estados.
 const Box = styled.div`
   text-align: center;
   padding: 60px 20px;
@@ -46,7 +54,7 @@ export function Loading() {
   )
 }
 
-/** Mensagem de erro de busca. */
+/** Mensagem de erro de busca. Recebe a mensagem ja tratada pelo service/hook. */
 export function ErrorState({ message }: { message: string }) {
   return (
     <ErrorBox role="alert">

@@ -1,9 +1,17 @@
+/**
+ * AsteroidCard — cartao que representa um unico asteroide.
+ *
+ * Exibe todos os dados exigidos pelo desafio (nome, diametro min/max, distancia
+ * da Terra e alerta de perigo), alem de extras (velocidade, data e link ao JPL).
+ * A aparencia muda conforme o asteroide seja ou nao perigoso (borda/brilho vermelho).
+ */
 import styled from 'styled-components'
 import type { Asteroid } from '../types/nasa'
 import { formatDateBR } from '../utils/date'
 import { formatDiameterKm, formatKm, formatVelocity } from '../utils/format'
 
 interface AsteroidCardProps {
+  /** Asteroide ja normalizado a ser exibido no cartao. */
   asteroid: Asteroid
 }
 

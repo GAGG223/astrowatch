@@ -1,3 +1,12 @@
+/**
+ * Filters — barra de filtros no topo do conteudo.
+ *
+ * Reune dois controles:
+ * - Busca por nome: "controlada" pelo componente pai (valor e callback vem via props),
+ *   aplicada instantaneamente sobre a lista ja carregada.
+ * - Filtro por data (inicio/fim): mantido em estado local enquanto o usuario edita e
+ *   so disparado ao enviar o formulario, pois gera uma nova requisicao a API.
+ */
 import { useState } from 'react'
 import styled from 'styled-components'
 

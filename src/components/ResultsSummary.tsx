@@ -1,7 +1,15 @@
+/**
+ * ResultsSummary — barra de resumo exibida acima da lista.
+ *
+ * Mostra, em destaque, quantos asteroides estao sendo exibidos e quantos
+ * sao potencialmente perigosos. Faz o "plural" correto de cada texto.
+ */
 import styled from 'styled-components'
 
 interface ResultsSummaryProps {
+  /** Total de asteroides atualmente exibidos (ja considerando os filtros). */
   total: number
+  /** Quantos, desse total, sao potencialmente perigosos. */
   hazardous: number
 }
 

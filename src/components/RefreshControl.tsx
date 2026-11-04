@@ -1,3 +1,10 @@
+/**
+ * RefreshControl — barra de atualizacao manual.
+ *
+ * Contem o botao "Atualizar agora" (com icone girando enquanto busca) e o
+ * indicador da data/hora da ultima atualizacao bem-sucedida. A atualizacao
+ * automatica na virada do dia e tratada separadamente (hook useDayChange).
+ */
 import styled from 'styled-components'
 
 interface RefreshControlProps {

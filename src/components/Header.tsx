@@ -1,3 +1,9 @@
+/**
+ * Header — cabecalho fixo no topo da aplicacao.
+ *
+ * Exibe o logo "meatball" da NASA (desenhado em SVG, sem imagem externa) ao
+ * lado do titulo "AstroWatch". E puramente visual: nao recebe props nem tem logica.
+ */
 import styled from 'styled-components'
 
 const Wrapper = styled.header`
