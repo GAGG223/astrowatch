@@ -9,6 +9,7 @@
  */
 import { useState } from 'react'
 import styled from 'styled-components'
+import { validateDateRange } from '../utils/date'
 
 interface FiltersProps {
   /** Valor atual do campo de busca por nome. */
@@ -74,6 +75,14 @@ const Input = styled.input`
   }
 `
 
+// Mensagem de erro de validacao, ocupa a linha inteira do formulario.
+const RangeError = styled.p`
+  grid-column: 1 / -1;
+  color: ${({ theme }) => theme.colors.danger};
+  font-size: 0.9rem;
+  font-weight: 600;
+`
+
 const SubmitButton = styled.button`
   background: linear-gradient(
     135deg,
@@ -118,9 +127,17 @@ export function Filters({
 }: FiltersProps) {
   const [localStart, setLocalStart] = useState(startDate)
   const [localEnd, setLocalEnd] = useState(endDate)
+  // Mensagem de validacao do intervalo (null = intervalo valido).
+  const [rangeError, setRangeError] = useState<string | null>(null)
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
+
+    // Valida antes de consultar a API, evitando o erro 400 de intervalos longos.
+    const error = validateDateRange(localStart, localEnd)
+    setRangeError(error)
+    if (error) return
+
     onDateFilter(localStart, localEnd)
   }
 
@@ -159,6 +176,9 @@ export function Filters({
       <SubmitButton type="submit" disabled={loading}>
         {loading ? 'Buscando...' : 'Filtrar'}
       </SubmitButton>
+
+      {/* role="alert" faz leitores de tela anunciarem o erro assim que ele aparece. */}
+      {rangeError && <RangeError role="alert">{rangeError}</RangeError>}
     </Form>
   )
 }

@@ -41,18 +41,23 @@ function normalizeAsteroid(neo: NearEarthObject): Asteroid {
  *
  * @param startDate data inicial no formato YYYY-MM-DD
  * @param endDate   data final no formato YYYY-MM-DD (max. 7 dias apos a inicial)
+ * @param signal    opcional; permite cancelar a requisicao (AbortController).
+ *                  Quando cancelada, a promise rejeita com um AbortError.
  * @returns lista de asteroides normalizados, ordenada por data de aproximacao
  */
 export async function fetchAsteroids(
   startDate: string,
   endDate: string,
+  signal?: AbortSignal,
 ): Promise<Asteroid[]> {
   const url = `${BASE_URL}?start_date=${startDate}&end_date=${endDate}&api_key=${API_KEY}`
 
   let response: Response
   try {
-    response = await fetch(url)
-  } catch {
+    response = await fetch(url, { signal })
+  } catch (err) {
+    // Cancelamento intencional nao e falha de rede: repassa para o chamador ignorar.
+    if (err instanceof DOMException && err.name === 'AbortError') throw err
     throw new NasaApiError(
       'Nao foi possivel conectar a API da NASA. Verifique sua conexao com a internet.',
     )
@@ -62,6 +67,11 @@ export async function fetchAsteroids(
     if (response.status === 429) {
       throw new NasaApiError(
         'Limite de requisicoes da API atingido. Configure sua propria VITE_NASA_API_KEY ou aguarde alguns instantes.',
+      )
+    }
+    if (response.status === 400) {
+      throw new NasaApiError(
+        'A API recusou o periodo informado. Use um intervalo de no maximo 7 dias.',
       )
     }
     throw new NasaApiError(

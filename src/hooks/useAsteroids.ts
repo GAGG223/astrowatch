@@ -41,12 +41,22 @@ export function useAsteroids(): UseAsteroidsResult {
   // Guarda o ultimo intervalo buscado para que o refresh saiba o que recarregar.
   const rangeRef = useRef(getLast7DaysRange())
 
+  // Controla a requisicao em andamento para evitar "corrida" entre buscas:
+  // se o usuario dispara uma nova busca, a anterior e cancelada e sua resposta
+  // (mesmo que chegue depois) nunca sobrescreve o resultado mais recente.
+  const abortRef = useRef<AbortController | null>(null)
+
   /**
    * Executa a busca. Quando `silent` e true, nao exibe a tela de loading
    * (usado pelo auto-refresh), apenas o indicador de "refreshing".
    */
   const run = useCallback(
     async (startDate: string, endDate: string, silent: boolean) => {
+      // Cancela a busca anterior (se houver) e registra esta como a vigente.
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
+
       if (silent) {
         setRefreshing(true)
       } else {
@@ -55,10 +65,15 @@ export function useAsteroids(): UseAsteroidsResult {
       setError(null)
 
       try {
-        const result = await fetchAsteroids(startDate, endDate)
+        const result = await fetchAsteroids(startDate, endDate, controller.signal)
+        // Resposta de uma busca ja substituida por outra mais nova: descarta.
+        if (controller.signal.aborted) return
         setAsteroids(result)
         setLastUpdated(new Date())
       } catch (err) {
+        // Busca cancelada por uma mais nova: nao e erro e nao mexe no estado.
+        if (controller.signal.aborted) return
+
         const message =
           err instanceof NasaApiError
             ? err.message
@@ -69,8 +84,12 @@ export function useAsteroids(): UseAsteroidsResult {
           setAsteroids([])
         }
       } finally {
-        setLoading(false)
-        setRefreshing(false)
+        // So a busca vigente encerra os indicadores; uma cancelada nao pode
+        // desligar o "carregando" da busca que a substituiu.
+        if (abortRef.current === controller) {
+          setLoading(false)
+          setRefreshing(false)
+        }
       }
     },
     [],
@@ -95,10 +114,12 @@ export function useAsteroids(): UseAsteroidsResult {
     void run(latest.startDate, latest.endDate, true)
   }, [run])
 
-  // Carga inicial: ultimos 7 dias.
+  // Carga inicial: ultimos 7 dias. No cleanup, cancela a requisicao pendente
+  // (ao desmontar ou no segundo ciclo do StrictMode em desenvolvimento).
   useEffect(() => {
     const { startDate, endDate } = rangeRef.current
     void run(startDate, endDate, false)
+    return () => abortRef.current?.abort()
   }, [run])
 
   return {
