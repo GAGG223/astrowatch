@@ -15,8 +15,8 @@ export type SortKey = 'date' | 'distance' | 'size'
 
 /** Rotulos exibidos no seletor de ordenacao. */
 export const SORT_OPTIONS: ReadonlyArray<{ value: SortKey; label: string }> = [
-  { value: 'date', label: 'Padrao' },
-  { value: 'distance', label: 'Mais proximos da Terra' },
+  { value: 'date', label: 'Padrão' },
+  { value: 'distance', label: 'Mais próximos da Terra' },
   { value: 'size', label: 'Maiores primeiro' },
 ]
 

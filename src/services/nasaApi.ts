@@ -59,19 +59,19 @@ export async function fetchAsteroids(
     // Cancelamento intencional nao e falha de rede: repassa para o chamador ignorar.
     if (err instanceof DOMException && err.name === 'AbortError') throw err
     throw new NasaApiError(
-      'Nao foi possivel conectar a API da NASA. Verifique sua conexao com a internet.',
+      'Não foi possível conectar à API da NASA. Verifique sua conexão com a internet.',
     )
   }
 
   if (!response.ok) {
     if (response.status === 429) {
       throw new NasaApiError(
-        'Limite de requisicoes da API atingido. Configure sua propria VITE_NASA_API_KEY ou aguarde alguns instantes.',
+        'Limite de requisições da API atingido. Configure sua própria VITE_NASA_API_KEY ou aguarde alguns instantes.',
       )
     }
     if (response.status === 400) {
       throw new NasaApiError(
-        'A API recusou o periodo informado. Use um intervalo de no maximo 7 dias.',
+        'A API recusou o período informado. Use um intervalo de no máximo 7 dias.',
       )
     }
     throw new NasaApiError(

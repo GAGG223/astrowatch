@@ -138,15 +138,15 @@ export function AsteroidCard({ asteroid, headingLevel = 'h2' }: AsteroidCardProp
 
       <Attributes>
         <Attribute>
-          <dt>Diametro minimo</dt>
+          <dt>Diâmetro mínimo</dt>
           <dd>{formatDiameterKm(asteroid.diameterMinKm)}</dd>
         </Attribute>
         <Attribute>
-          <dt>Diametro maximo</dt>
+          <dt>Diâmetro máximo</dt>
           <dd>{formatDiameterKm(asteroid.diameterMaxKm)}</dd>
         </Attribute>
         <Attribute>
-          <dt>Distancia da Terra</dt>
+          <dt>Distância da Terra</dt>
           <dd>{formatKm(asteroid.missDistanceKm)}</dd>
         </Attribute>
         <Attribute>
@@ -156,7 +156,7 @@ export function AsteroidCard({ asteroid, headingLevel = 'h2' }: AsteroidCardProp
       </Attributes>
 
       <Footer>
-        <span>Aproximacao: {formatDateBR(asteroid.approachDate)}</span>
+        <span>Aproximação: {formatDateBR(asteroid.approachDate)}</span>
         <a href={asteroid.jplUrl} target="_blank" rel="noopener noreferrer">
           Ver na NASA ↗
         </a>

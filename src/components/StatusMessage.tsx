@@ -58,7 +58,7 @@ export function Loading() {
 export function ErrorState({ message }: { message: string }) {
   return (
     <ErrorBox role="alert">
-      <Title>Nao foi possivel carregar os dados</Title>
+      <Title>Não foi possível carregar os dados</Title>
       {message}
     </ErrorBox>
   )

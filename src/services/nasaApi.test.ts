@@ -72,7 +72,7 @@ describe('fetchAsteroids', () => {
   it('lanca erro amigavel quando o limite de requisicoes e atingido (429)', async () => {
     mockFetch({ ok: false, status: 429 })
 
-    await expect(fetchAsteroids('a', 'b')).rejects.toThrow(/Limite de requisicoes/)
+    await expect(fetchAsteroids('a', 'b')).rejects.toThrow(/Limite de requisições/)
   })
 
   it('lanca erro amigavel quando a API recusa o periodo (400)', async () => {

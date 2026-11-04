@@ -77,7 +77,7 @@ export function useAsteroids(): UseAsteroidsResult {
         const message =
           err instanceof NasaApiError
             ? err.message
-            : 'Ocorreu um erro inesperado ao buscar os asteroides.'
+            : 'Ocorreu um erro inesperado ao buscar os asteroides. Tente novamente.'
         setError(message)
         // Num refresh silencioso, preservamos a lista anterior para nao esvaziar a tela.
         if (!silent) {
