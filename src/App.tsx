@@ -3,11 +3,13 @@ import styled from 'styled-components'
 import { AsteroidList } from './components/AsteroidList'
 import { Filters } from './components/Filters'
 import { Header } from './components/Header'
+import { ListControls } from './components/ListControls'
 import { RefreshControl } from './components/RefreshControl'
 import { ResultsSummary } from './components/ResultsSummary'
 import { EmptyState, ErrorState, Loading } from './components/StatusMessage'
 import { useAsteroids } from './hooks/useAsteroids'
 import { useDayChange } from './hooks/useDayChange'
+import { filterAndSortAsteroids, type SortKey } from './utils/asteroids'
 import { getLast7DaysRange } from './utils/date'
 
 const Main = styled.main`
@@ -36,6 +38,8 @@ export function App() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [range, setRange] = useState(initialRange)
+  const [sortBy, setSortBy] = useState<SortKey>('date')
+  const [onlyHazardous, setOnlyHazardous] = useState(false)
 
   // Na virada do dia, recarrega os ultimos 7 dias a partir da nova data.
   useDayChange(() => {
@@ -44,12 +48,17 @@ export function App() {
     reloadLatest()
   })
 
-  // Busca por nome aplicada no cliente sobre o resultado ja carregado.
-  const filteredAsteroids = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase()
-    if (!term) return asteroids
-    return asteroids.filter((a) => a.name.toLowerCase().includes(term))
-  }, [asteroids, searchTerm])
+  // Busca por nome, filtro de perigosos e ordenacao, tudo no cliente sobre o
+  // resultado ja carregado (nao gera requisicao).
+  const filteredAsteroids = useMemo(
+    () =>
+      filterAndSortAsteroids(asteroids, {
+        term: searchTerm,
+        onlyHazardous,
+        sortBy,
+      }),
+    [asteroids, searchTerm, onlyHazardous, sortBy],
+  )
 
   const hazardousCount = useMemo(
     () => filteredAsteroids.filter((a) => a.isHazardous).length,
@@ -85,6 +94,13 @@ export function App() {
           refreshing={refreshing}
           lastUpdated={lastUpdated}
           onRefreshNow={refresh}
+        />
+
+        <ListControls
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          onlyHazardous={onlyHazardous}
+          onOnlyHazardousChange={setOnlyHazardous}
         />
 
         {!loading && !error && (
