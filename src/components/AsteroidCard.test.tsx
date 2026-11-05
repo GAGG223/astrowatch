@@ -32,8 +32,8 @@ describe('AsteroidCard', () => {
       />,
     )
 
-    // Data seguida do horario no formato "as HH:MM".
-    expect(screen.getByText(/01\/11\/2026 às \d{2}:\d{2}/)).toBeInTheDocument()
+    // Data seguida do horario no formato "DD/MM/AAAA · HH:MM".
+    expect(screen.getByText(/01\/11\/2026 · \d{2}:\d{2}/)).toBeInTheDocument()
   })
 
   it('mostra so a data quando o horario nao esta disponivel', () => {
@@ -44,7 +44,7 @@ describe('AsteroidCard', () => {
     )
 
     expect(screen.getByText(/01\/11\/2026/)).toBeInTheDocument()
-    expect(screen.queryByText(/às/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/·/)).not.toBeInTheDocument()
   })
 
   it('mostra o aviso quando o asteroide e potencialmente perigoso', () => {

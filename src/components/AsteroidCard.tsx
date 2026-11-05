@@ -40,6 +40,8 @@ const Card = styled.article<{ $hazardous: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 14px;
+  /* Ocupa toda a altura da celula do grid: cards da mesma linha ficam iguais. */
+  height: 100%;
   box-shadow: ${({ theme, $hazardous }) =>
     $hazardous ? theme.shadow.glowDanger : theme.shadow.card};
   transition:
@@ -67,9 +69,10 @@ const Head = styled.div`
 // seguem a hierarquia sem pular nivel (requisito de acessibilidade).
 const Name = styled.h2`
   font-family: ${({ theme }) => theme.fonts.heading};
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.2px;
+  line-height: 1.3;
   word-break: break-word;
   color: ${({ theme }) => theme.colors.text};
 `
@@ -90,7 +93,10 @@ const HazardBadge = styled.span`
 const Attributes = styled.dl`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px 16px;
+  gap: 14px 16px;
+  align-content: start;
+  /* Estica para ocupar o espaco disponivel, empurrando o rodape para a base. */
+  flex: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     grid-template-columns: 1fr;
@@ -119,10 +125,22 @@ const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   border-top: 1px solid ${({ theme }) => theme.colors.border};
   padding-top: 12px;
   font-size: 0.85rem;
   color: ${({ theme }) => theme.colors.textMuted};
+`
+
+// Data/horario da aproximacao: nao encolhe e nao quebra no meio.
+const ApproachInfo = styled.span`
+  flex-shrink: 0;
+`
+
+// Link para a NASA: nao deixa a seta cair sozinha em outra linha.
+const JplLink = styled.a`
+  flex-shrink: 0;
+  white-space: nowrap;
 `
 
 /**
@@ -161,14 +179,14 @@ export function AsteroidCard({ asteroid, headingLevel = 'h2' }: AsteroidCardProp
       </Attributes>
 
       <Footer>
-        <span>
-          Aproximação: {formatDateBR(asteroid.approachDate)}
+        <ApproachInfo>
+          {formatDateBR(asteroid.approachDate)}
           {formatApproachTime(asteroid.approachEpoch) &&
-            ` às ${formatApproachTime(asteroid.approachEpoch)}`}
-        </span>
-        <a href={asteroid.jplUrl} target="_blank" rel="noopener noreferrer">
+            ` · ${formatApproachTime(asteroid.approachEpoch)}`}
+        </ApproachInfo>
+        <JplLink href={asteroid.jplUrl} target="_blank" rel="noopener noreferrer">
           Ver na NASA ↗
-        </a>
+        </JplLink>
       </Footer>
     </Card>
   )
