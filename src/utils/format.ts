@@ -26,3 +26,15 @@ export function formatDiameterKm(value: number): string {
 export function formatVelocity(value: number): string {
   return `${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} km/h`
 }
+
+/**
+ * Formata o horario da aproximacao (epoch em ms) como HH:MM no fuso local
+ * do usuario. Retorna null quando o horario nao esta disponivel.
+ */
+export function formatApproachTime(epochMs: number): string | null {
+  if (!epochMs) return null
+  return new Date(epochMs).toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}

@@ -27,6 +27,7 @@ function normalizeAsteroid(neo: NearEarthObject): Asteroid {
     id: neo.id,
     name: neo.name,
     approachDate: approach?.close_approach_date ?? '',
+    approachEpoch: approach?.epoch_date_close_approach ?? 0,
     diameterMinKm: neo.estimated_diameter.kilometers.estimated_diameter_min,
     diameterMaxKm: neo.estimated_diameter.kilometers.estimated_diameter_max,
     missDistanceKm: approach ? Number(approach.miss_distance.kilometers) : 0,

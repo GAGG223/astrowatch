@@ -25,6 +25,28 @@ describe('AsteroidCard', () => {
     expect(screen.getByText(/01\/11\/2026/)).toBeInTheDocument()
   })
 
+  it('mostra o horario da aproximacao quando disponivel', () => {
+    renderWithTheme(
+      <AsteroidCard
+        asteroid={makeAsteroid({ approachDate: '2026-11-01', approachEpoch: 1793836800000 })}
+      />,
+    )
+
+    // Data seguida do horario no formato "as HH:MM".
+    expect(screen.getByText(/01\/11\/2026 às \d{2}:\d{2}/)).toBeInTheDocument()
+  })
+
+  it('mostra so a data quando o horario nao esta disponivel', () => {
+    renderWithTheme(
+      <AsteroidCard
+        asteroid={makeAsteroid({ approachDate: '2026-11-01', approachEpoch: 0 })}
+      />,
+    )
+
+    expect(screen.getByText(/01\/11\/2026/)).toBeInTheDocument()
+    expect(screen.queryByText(/às/)).not.toBeInTheDocument()
+  })
+
   it('mostra o aviso quando o asteroide e potencialmente perigoso', () => {
     renderWithTheme(<AsteroidCard asteroid={makeAsteroid({ isHazardous: true })} />)
 

@@ -16,6 +16,8 @@ export interface EstimatedDiameter {
 /** Dados de aproximacao de um asteroide a um corpo celeste. */
 export interface CloseApproachData {
   close_approach_date: string
+  /** Momento exato da aproximacao, em milissegundos desde a epoch (UTC). */
+  epoch_date_close_approach: number
   miss_distance: {
     /** Distancia que o asteroide passou do corpo (em km). */
     kilometers: string
@@ -53,6 +55,8 @@ export interface Asteroid {
   name: string
   /** Data de aproximacao (YYYY-MM-DD). */
   approachDate: string
+  /** Momento exato da aproximacao (ms desde a epoch, UTC); 0 se indisponivel. */
+  approachEpoch: number
   /** Diametro minimo estimado em km. */
   diameterMinKm: number
   /** Diametro maximo estimado em km. */

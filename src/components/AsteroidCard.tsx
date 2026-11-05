@@ -8,7 +8,12 @@
 import styled from 'styled-components'
 import type { Asteroid } from '../types/nasa'
 import { formatDateBR } from '../utils/date'
-import { formatDiameterKm, formatKm, formatVelocity } from '../utils/format'
+import {
+  formatApproachTime,
+  formatDiameterKm,
+  formatKm,
+  formatVelocity,
+} from '../utils/format'
 
 interface AsteroidCardProps {
   /** Asteroide ja normalizado a ser exibido no cartao. */
@@ -156,7 +161,11 @@ export function AsteroidCard({ asteroid, headingLevel = 'h2' }: AsteroidCardProp
       </Attributes>
 
       <Footer>
-        <span>Aproximação: {formatDateBR(asteroid.approachDate)}</span>
+        <span>
+          Aproximação: {formatDateBR(asteroid.approachDate)}
+          {formatApproachTime(asteroid.approachEpoch) &&
+            ` às ${formatApproachTime(asteroid.approachEpoch)}`}
+        </span>
         <a href={asteroid.jplUrl} target="_blank" rel="noopener noreferrer">
           Ver na NASA ↗
         </a>

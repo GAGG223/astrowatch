@@ -50,6 +50,7 @@ describe('fetchAsteroids', () => {
       id: '10',
       name: '467351 (2003 KO2)',
       approachDate: '2026-11-01',
+      approachEpoch: 1793836800000,
       diameterMinKm: 0.224,
       diameterMaxKm: 0.501,
       // Na API a distancia e a velocidade chegam como texto; viram numero.

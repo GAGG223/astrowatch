@@ -12,6 +12,7 @@ export function makeAsteroid(overrides: Partial<Asteroid> = {}): Asteroid {
     id: '1',
     name: '(2020 AA)',
     approachDate: '2026-11-01',
+    approachEpoch: 0,
     diameterMinKm: 0.1,
     diameterMaxKm: 0.2,
     missDistanceKm: 1_000_000,
@@ -38,6 +39,7 @@ export const rawFeedResponse: NeoFeedResponse = {
         close_approach_data: [
           {
             close_approach_date: '2026-11-02',
+            epoch_date_close_approach: 1793923200000,
             orbiting_body: 'Earth',
             miss_distance: { kilometers: '5000000.5', lunar: '13' },
             relative_velocity: { kilometers_per_hour: '30000.9' },
@@ -57,6 +59,7 @@ export const rawFeedResponse: NeoFeedResponse = {
         close_approach_data: [
           {
             close_approach_date: '2026-11-01',
+            epoch_date_close_approach: 1793836800000,
             orbiting_body: 'Earth',
             miss_distance: { kilometers: '16718435.4', lunar: '43' },
             relative_velocity: { kilometers_per_hour: '49346.04' },
@@ -74,6 +77,7 @@ export const rawFeedResponse: NeoFeedResponse = {
         close_approach_data: [
           {
             close_approach_date: '2026-11-01',
+            epoch_date_close_approach: 1793880000000,
             orbiting_body: 'Earth',
             miss_distance: { kilometers: '59090433.5', lunar: '153' },
             relative_velocity: { kilometers_per_hour: '49391.3' },
