@@ -64,12 +64,20 @@ export function ErrorState({ message }: { message: string }) {
   )
 }
 
-/** Estado vazio: nenhuma correspondencia encontrada. */
-export function EmptyState() {
+/**
+ * Estado vazio: nenhuma correspondencia encontrada.
+ * A mensagem e contextual, pois um filtro de "mais proximos" vazio tem um
+ * motivo diferente de uma busca por nome sem resultados.
+ */
+export function EmptyState({
+  message = 'Ajuste o intervalo de datas ou o termo de busca e tente novamente.',
+}: {
+  message?: string
+}) {
   return (
     <Box>
       <Title>Nenhum asteroide encontrado</Title>
-      Ajuste o intervalo de datas ou o termo de busca e tente novamente.
+      {message}
     </Box>
   )
 }

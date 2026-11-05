@@ -51,64 +51,73 @@ describe('filterAndSortAsteroids', () => {
       ...base,
       onlyHazardous: true,
     })
+    // Modo padrao ordena por dia mais recente primeiro (c = 11-03, a = 11-02).
     expect(ids(result)).toEqual(['c', 'a'])
   })
 
-  it('combina busca e filtro de perigosos', () => {
+  it('padrao: ordena por dia mais recente e, dentro do dia, do maior ao menor', () => {
+    const sameDay = [
+      makeAsteroid({ id: 'hoje-pequeno', approachDate: '2026-11-04', diameterMaxKm: 0.2 }),
+      makeAsteroid({ id: 'ontem', approachDate: '2026-11-03', diameterMaxKm: 0.9 }),
+      makeAsteroid({ id: 'hoje-grande', approachDate: '2026-11-04', diameterMaxKm: 0.8 }),
+    ]
+    expect(ids(filterAndSortAsteroids(sameDay, base))).toEqual([
+      'hoje-grande',
+      'hoje-pequeno',
+      'ontem',
+    ])
+  })
+
+  describe('modo "mais proximos da Terra" (< 7,5 mi km)', () => {
+    const list = [
+      makeAsteroid({ id: 'perto1', missDistanceKm: 2_000_000 }),
+      makeAsteroid({ id: 'longe', missDistanceKm: 10_000_000 }),
+      makeAsteroid({ id: 'perto2', missDistanceKm: 500_000 }),
+      makeAsteroid({ id: 'limite', missDistanceKm: 7_500_000 }), // no limite: fora
+    ]
+
+    it('lista apenas os que passaram a menos de 7,5 mi km', () => {
+      const result = filterAndSortAsteroids(list, { ...base, sortBy: 'distance' })
+      expect(ids(result)).toEqual(['perto2', 'perto1'])
+    })
+
+    it('ordena do mais proximo ao mais distante', () => {
+      const result = filterAndSortAsteroids(list, { ...base, sortBy: 'distance' })
+      expect(result[0].id).toBe('perto2')
+    })
+
+    it('ignora asteroides sem distancia (0)', () => {
+      const semDist = [makeAsteroid({ id: 'x', missDistanceKm: 0 })]
+      expect(filterAndSortAsteroids(semDist, { ...base, sortBy: 'distance' })).toEqual([])
+    })
+  })
+
+  describe('modo "maiores asteroides" (> 0,14 km)', () => {
+    const list = [
+      makeAsteroid({ id: 'grande', diameterMaxKm: 0.5 }),
+      makeAsteroid({ id: 'pequeno', diameterMaxKm: 0.1 }),
+      makeAsteroid({ id: 'medio', diameterMaxKm: 0.2 }),
+      makeAsteroid({ id: 'limite', diameterMaxKm: 0.14 }), // no limite: fora
+    ]
+
+    it('lista apenas os com diametro acima de 0,14 km', () => {
+      const result = filterAndSortAsteroids(list, { ...base, sortBy: 'size' })
+      expect(ids(result)).toEqual(['grande', 'medio'])
+    })
+
+    it('ordena do maior ao menor', () => {
+      const result = filterAndSortAsteroids(list, { ...base, sortBy: 'size' })
+      expect(result[0].id).toBe('grande')
+    })
+  })
+
+  it('combina busca e filtro de perigosos no modo padrao', () => {
     const result = filterAndSortAsteroids(asteroids, {
       term: '2021',
       onlyHazardous: true,
       sortBy: 'date',
     })
     expect(ids(result)).toEqual(['c'])
-  })
-
-  // Dois dias com varios asteroides cada, fora de ordem de proposito.
-  const twoDays = [
-    makeAsteroid({ id: 'ontem-longe-pequeno', approachDate: '2026-11-03', missDistanceKm: 9e6, diameterMaxKm: 0.1 }),
-    makeAsteroid({ id: 'hoje-medio', approachDate: '2026-11-04', missDistanceKm: 5e6, diameterMaxKm: 0.5 }),
-    makeAsteroid({ id: 'ontem-perto-grande', approachDate: '2026-11-03', missDistanceKm: 1e6, diameterMaxKm: 0.9 }),
-    makeAsteroid({ id: 'hoje-perto-pequeno', approachDate: '2026-11-04', missDistanceKm: 2e6, diameterMaxKm: 0.2 }),
-    makeAsteroid({ id: 'hoje-longe-grande', approachDate: '2026-11-04', missDistanceKm: 8e6, diameterMaxKm: 0.8 }),
-  ]
-
-  it('padrao: dia mais recente primeiro, mantendo a ordem original dentro do dia', () => {
-    const result = filterAndSortAsteroids(twoDays, base)
-    expect(ids(result)).toEqual([
-      'hoje-medio',
-      'hoje-perto-pequeno',
-      'hoje-longe-grande',
-      'ontem-longe-pequeno',
-      'ontem-perto-grande',
-    ])
-  })
-
-  it('mais proximos: mantem os dias na ordem e ordena dentro de cada dia', () => {
-    const result = filterAndSortAsteroids(twoDays, { ...base, sortBy: 'distance' })
-    expect(ids(result)).toEqual([
-      'hoje-perto-pequeno',
-      'hoje-medio',
-      'hoje-longe-grande',
-      'ontem-perto-grande',
-      'ontem-longe-pequeno',
-    ])
-  })
-
-  it('maiores primeiro: mantem os dias na ordem e ordena dentro de cada dia', () => {
-    const result = filterAndSortAsteroids(twoDays, { ...base, sortBy: 'size' })
-    expect(ids(result)).toEqual([
-      'hoje-longe-grande',
-      'hoje-medio',
-      'hoje-perto-pequeno',
-      'ontem-perto-grande',
-      'ontem-longe-pequeno',
-    ])
-  })
-
-  it('o asteroide mais proximo de um dia antigo nunca passa na frente de hoje', () => {
-    const result = filterAndSortAsteroids(twoDays, { ...base, sortBy: 'distance' })
-    // 'ontem-perto-grande' e o mais proximo de todos (1e6 km), mas e de ontem.
-    expect(result[0].approachDate).toBe('2026-11-04')
   })
 
   it('nao altera a lista original', () => {

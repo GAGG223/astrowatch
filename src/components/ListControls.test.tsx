@@ -15,7 +15,7 @@ describe('ListControls', () => {
       />,
     )
 
-    fireEvent.change(screen.getByLabelText('Ordenar cada dia por'), {
+    fireEvent.change(screen.getByLabelText('Visualizar'), {
       target: { value: 'distance' },
     })
 

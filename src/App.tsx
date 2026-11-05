@@ -65,6 +65,14 @@ export function App() {
     [filteredAsteroids],
   )
 
+  // Mensagem de "nenhum resultado" adaptada ao modo selecionado.
+  const emptyMessage =
+    sortBy === 'distance'
+      ? 'Nenhum asteroide passou a menos de 7,5 milhões de km da Terra no período.'
+      : sortBy === 'size'
+        ? 'Nenhum asteroide com diâmetro acima de 0,14 km (140 m) no período.'
+        : 'Ajuste o intervalo de datas ou o termo de busca e tente novamente.'
+
   function handleDateFilter(startDate: string, endDate: string) {
     setRange({ startDate, endDate })
     search(startDate, endDate)
@@ -73,9 +81,12 @@ export function App() {
   function renderContent() {
     if (loading) return <Loading />
     if (error) return <ErrorState message={error} />
-    if (filteredAsteroids.length === 0) return <EmptyState />
-    // Os cards aparecem sempre separados por dia (hoje no topo).
-    return <AsteroidList asteroids={filteredAsteroids} />
+    if (filteredAsteroids.length === 0) return <EmptyState message={emptyMessage} />
+    // No modo Padrao, agrupa por dia (hoje no topo). Nos modos "mais proximos"
+    // e "maiores", a lista ja vem filtrada e vira uma lista unica.
+    return (
+      <AsteroidList asteroids={filteredAsteroids} groupByDate={sortBy === 'date'} />
+    )
   }
 
   return (

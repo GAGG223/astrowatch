@@ -62,8 +62,8 @@ export function ListControls({
   return (
     <Bar>
       <Field>
-        {/* A lista e sempre agrupada por dia; o criterio vale dentro de cada dia. */}
-        Ordenar cada dia por
+        {/* "Padrao" mostra tudo por dia; os outros filtram por criterio da NASA. */}
+        Visualizar
         <Select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value as SortKey)}

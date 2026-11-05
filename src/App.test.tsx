@@ -88,22 +88,12 @@ describe('App', () => {
     ])
   })
 
-  it('mantem a separacao por dia ao mudar a ordenacao', async () => {
+  it('no modo padrao, ordena cada dia do maior para o menor', async () => {
     fetchMock.mockResolvedValue(sameDayAsteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
 
-    fireEvent.change(screen.getByLabelText('Ordenar cada dia por'), {
-      target: { value: 'size' },
-    })
-
-    // Continuam os titulos dos 2 dias, com o mais recente primeiro.
-    const dayTitles = screen.getAllByRole('heading', { level: 2 })
-    expect(dayTitles.map((h) => h.textContent)).toEqual([
-      expect.stringContaining('04/11/2026'),
-      expect.stringContaining('03/11/2026'),
-    ])
-    // Dentro de cada dia, o maior primeiro.
+    // Hoje no topo (maior antes do menor), depois ontem (idem).
     expect(cardNames()).toEqual(['(HOJE LONGE)', '(HOJE PERTO)', '(ONTEM LONGE)', '(ONTEM PERTO)'])
   })
 
@@ -130,17 +120,46 @@ describe('App', () => {
     expect(cardNames()).toEqual(['467351 (2003 KO2)'])
   })
 
-  it('reordena pelos mais proximos dentro de cada dia', async () => {
+  it('"mais proximos" lista so os < 7,5 mi km, do mais perto ao mais longe, sem agrupar', async () => {
     fetchMock.mockResolvedValue(sameDayAsteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
 
-    fireEvent.change(screen.getByLabelText('Ordenar cada dia por'), {
+    fireEvent.change(screen.getByLabelText('Visualizar'), {
       target: { value: 'distance' },
     })
 
-    // Hoje (04/11) continua no topo; dentro de cada dia, o mais proximo primeiro.
-    expect(cardNames()).toEqual(['(HOJE PERTO)', '(HOJE LONGE)', '(ONTEM PERTO)', '(ONTEM LONGE)'])
+    // "(ONTEM LONGE)" tem 9 mi km -> fica de fora. Os outros, por distancia crescente.
+    expect(cardNames()).toEqual(['(ONTEM PERTO)', '(HOJE PERTO)', '(HOJE LONGE)'])
+    // Sem titulos de dia: nao aparece o cabecalho "(N asteroides)" do agrupamento.
+    expect(screen.queryByText(/asteroides\)/)).not.toBeInTheDocument()
+  })
+
+  it('"maiores asteroides" lista so os > 0,14 km, do maior ao menor, sem agrupar', async () => {
+    fetchMock.mockResolvedValue(sameDayAsteroids)
+    renderWithTheme(<App />)
+    await screen.findAllByRole('article')
+
+    fireEvent.change(screen.getByLabelText('Visualizar'), {
+      target: { value: 'size' },
+    })
+
+    // "(ONTEM PERTO)" tem 0,1 km -> fica de fora. Os outros, do maior ao menor.
+    expect(cardNames()).toEqual(['(HOJE LONGE)', '(ONTEM LONGE)', '(HOJE PERTO)'])
+  })
+
+  it('mostra mensagem especifica quando nenhum asteroide e grande o bastante', async () => {
+    fetchMock.mockResolvedValue([
+      makeAsteroid({ id: 'p', name: '(PEQUENO)', diameterMaxKm: 0.05 }),
+    ])
+    renderWithTheme(<App />)
+    await screen.findAllByRole('article')
+
+    fireEvent.change(screen.getByLabelText('Visualizar'), {
+      target: { value: 'size' },
+    })
+
+    expect(screen.getByText(/diâmetro acima de 0,14 km/)).toBeInTheDocument()
   })
 
   it('mostra o estado vazio quando a busca nao encontra nada', async () => {
