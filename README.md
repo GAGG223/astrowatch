@@ -42,13 +42,19 @@ Projeto desenvolvido para o processo de recrutamento da **Olos** (vaga Front-End
 
 **Diferenciais**
 
+- **Agrupamento por dia** — os asteroides são separados por dia de aproximação, com o dia de hoje no topo ("Hoje", "Ontem", depois o dia da semana).
+- **Modos de visualização** (seletor "Visualizar"), todos agrupados por dia:
+  - **Padrão** — mostra todos, do maior para o menor dentro de cada dia.
+  - **Mais próximos da Terra** — exibe apenas os que passaram a menos de **7,5 milhões de km** (mesmo limiar que a NASA usa para "potencialmente perigoso"), do mais perto ao mais distante.
+  - **Maiores asteroides** — exibe apenas os com diâmetro acima de **0,14 km (140 m)**, do maior ao menor.
+- **Horário da aproximação** — além da data, cada card mostra a hora em que o asteroide passou (convertida para o fuso local).
+- **Filtro "somente potencialmente perigosos"**.
 - **Atualizar agora** — refaz a busca sob demanda, exibindo a data/hora da última atualização.
 - **Recarga na virada do dia** — ao mudar o dia, a janela de 7 dias é atualizada automaticamente (com uma verificação leve de data, sem requisições desnecessárias).
 - **Resumo** com o total de asteroides e quantos são perigosos.
 - Velocidade relativa e link para a página oficial de cada objeto no JPL/NASA.
-- **Ordenação** (data, mais próximos ou maiores) e filtro para exibir **somente os perigosos**.
 - **Validação do intervalo de datas** no próprio formulário, evitando o erro 400 da API para períodos acima de 7 dias.
-- Estados de **carregamento, erro e vazio**, com tratamento amigável do limite de requisições (HTTP 429).
+- Estados de **carregamento, erro e vazio**, com mensagens contextuais e tratamento amigável do limite de requisições (HTTP 429).
 - Interface com tema **universo/NASA** (fundo estrelado, tipografia espacial) e **layout responsivo**.
 
 ---
@@ -80,7 +86,7 @@ src/
 ├── components/             # Camada de apresentação (UI)
 │   ├── Header.tsx              # cabeçalho com logo da NASA e título
 │   ├── Filters.tsx             # busca por nome + filtro por data (com validação)
-│   ├── ListControls.tsx        # ordenação + filtro "somente perigosos"
+│   ├── ListControls.tsx        # modo de visualização + filtro "somente perigosos"
 │   ├── RefreshControl.tsx      # botão "atualizar agora" + última atualização
 │   ├── ResultsSummary.tsx      # resumo (total / perigosos)
 │   ├── AsteroidList.tsx        # grade de cartões
@@ -92,7 +98,7 @@ src/
 ├── services/
 │   └── nasaApi.ts              # chamada HTTP + normalização da resposta
 ├── types/                      # contrato da API NeoWs e modelo normalizado (Asteroid)
-├── utils/                      # datas, formatação (pt-BR) e regras de filtro/ordenação
+├── utils/                      # datas, formatação (pt-BR) e regras de filtro/ordenação/agrupamento
 ├── test/                       # setup, fixtures e helpers compartilhados pelos testes
 ├── styles/                     # tema, estilos globais e tipagem do styled-components
 ├── App.tsx                     # composição e orquestração geral
@@ -111,7 +117,7 @@ Essa separação mantém o código testável, legível e fácil de evoluir. Os t
 
 ## Testes e qualidade
 
-- **64 testes** (Vitest + React Testing Library), cobrindo normalização da API, validação de datas, filtro/ordenação, o hook de estado (incluindo cancelamento de requisições concorrentes) e os principais fluxos do usuário.
+- **81 testes** (Vitest + React Testing Library), cobrindo normalização da API, validação de datas, filtro/ordenação/agrupamento por dia, os modos de visualização (critérios de distância e tamanho), o hook de estado (incluindo cancelamento de requisições concorrentes) e os principais fluxos do usuário.
 - **CI/CD com GitHub Actions**: a cada push e pull request, o pipeline roda lint, testes e build; a cada push na `main`, publica automaticamente no GitHub Pages.
 - **Lighthouse**: Performance 94, Acessibilidade 100, Boas práticas 100, SEO 100 (build de produção).
 
@@ -138,7 +144,8 @@ A chave é lida da variável de ambiente `VITE_NASA_API_KEY`. Quando ausente, a 
 
 ## Observações técnicas
 
-- Datas são tratadas no fuso local e exibidas em pt-BR (DD/MM/AAAA); números usam `Intl`/`toLocaleString`.
-- A **busca por nome** é feita no cliente sobre o resultado já carregado; o **filtro por data** dispara uma nova requisição à API.
+- Datas e horários são tratados no fuso local e exibidos em pt-BR (DD/MM/AAAA · HH:MM); números usam `Intl`/`toLocaleString`.
+- A **busca por nome**, os **modos de visualização** e o **filtro de perigosos** são aplicados no cliente sobre o resultado já carregado; o **filtro por data** dispara uma nova requisição à API.
+- Os limiares de "próximo" (7,5 mi km) e "grande" (0,14 km) seguem os critérios que a NASA usa para classificar objetos potencialmente perigosos.
 - Scripts disponíveis: `dev`, `build`, `preview`, `lint`, `test` e `test:watch`. Requer Node.js 22.22+ (exigência do jsdom usado nos testes).
 - Requisições à API são canceláveis (`AbortController`): ao disparar uma nova busca, a anterior é abortada, evitando que uma resposta antiga sobrescreva um resultado mais recente.
