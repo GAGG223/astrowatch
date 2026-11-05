@@ -82,11 +82,9 @@ export function App() {
     if (loading) return <Loading />
     if (error) return <ErrorState message={error} />
     if (filteredAsteroids.length === 0) return <EmptyState message={emptyMessage} />
-    // No modo Padrao, agrupa por dia (hoje no topo). Nos modos "mais proximos"
-    // e "maiores", a lista ja vem filtrada e vira uma lista unica.
-    return (
-      <AsteroidList asteroids={filteredAsteroids} groupByDate={sortBy === 'date'} />
-    )
+    // Em todos os modos a lista e agrupada por dia (hoje no topo). Nos modos
+    // "mais proximos" e "maiores", ela ja vem filtrada pelo criterio.
+    return <AsteroidList asteroids={filteredAsteroids} groupByDate />
   }
 
   return (

@@ -120,7 +120,7 @@ describe('App', () => {
     expect(cardNames()).toEqual(['467351 (2003 KO2)'])
   })
 
-  it('"mais proximos" lista so os < 7,5 mi km, do mais perto ao mais longe, sem agrupar', async () => {
+  it('"mais proximos" lista so os < 7,5 mi km, agrupados por dia, mais perto primeiro', async () => {
     fetchMock.mockResolvedValue(sameDayAsteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
@@ -129,13 +129,18 @@ describe('App', () => {
       target: { value: 'distance' },
     })
 
-    // "(ONTEM LONGE)" tem 9 mi km -> fica de fora. Os outros, por distancia crescente.
-    expect(cardNames()).toEqual(['(ONTEM PERTO)', '(HOJE PERTO)', '(HOJE LONGE)'])
-    // Sem titulos de dia: nao aparece o cabecalho "(N asteroides)" do agrupamento.
-    expect(screen.queryByText(/asteroides\)/)).not.toBeInTheDocument()
+    // Hoje (04/11): HOJE PERTO (2mi), HOJE LONGE (7mi). Ontem: ONTEM PERTO (1mi).
+    // "(ONTEM LONGE)" tem 9 mi km -> fica de fora.
+    expect(cardNames()).toEqual(['(HOJE PERTO)', '(HOJE LONGE)', '(ONTEM PERTO)'])
+    // Mantem os titulos de dia (agrupamento).
+    const dayTitles = screen.getAllByRole('heading', { level: 2 })
+    expect(dayTitles.map((h) => h.textContent)).toEqual([
+      expect.stringContaining('04/11/2026'),
+      expect.stringContaining('03/11/2026'),
+    ])
   })
 
-  it('"maiores asteroides" lista so os > 0,14 km, do maior ao menor, sem agrupar', async () => {
+  it('"maiores asteroides" lista so os > 0,14 km, agrupados por dia, maior primeiro', async () => {
     fetchMock.mockResolvedValue(sameDayAsteroids)
     renderWithTheme(<App />)
     await screen.findAllByRole('article')
@@ -144,8 +149,9 @@ describe('App', () => {
       target: { value: 'size' },
     })
 
-    // "(ONTEM PERTO)" tem 0,1 km -> fica de fora. Os outros, do maior ao menor.
-    expect(cardNames()).toEqual(['(HOJE LONGE)', '(ONTEM LONGE)', '(HOJE PERTO)'])
+    // Hoje: HOJE LONGE (0,9), HOJE PERTO (0,2). Ontem: ONTEM LONGE (0,8).
+    // "(ONTEM PERTO)" tem 0,1 km -> fica de fora.
+    expect(cardNames()).toEqual(['(HOJE LONGE)', '(HOJE PERTO)', '(ONTEM LONGE)'])
   })
 
   it('mostra mensagem especifica quando nenhum asteroide e grande o bastante', async () => {

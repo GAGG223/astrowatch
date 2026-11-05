@@ -59,36 +59,38 @@ function applyCommonFilters(
  * Aplica busca, filtro de perigosos e o criterio escolhido.
  * Nao altera o array original: trabalha sobre copias.
  *
- * Importante: nos modos 'distance' e 'size' a lista tambem e FILTRADA
- * (so entram os proximos / grandes), virando uma lista unica ordenada.
- * No modo 'date' nada e cortado; a ordenacao por dia e feita na UI (groupByDay).
+ * Em TODOS os modos a lista e agrupada por dia (mais recente primeiro) na UI.
+ * - 'distance' e 'size' tambem FILTRAM (so entram os proximos / grandes) e
+ *   ordenam dentro de cada dia pelo criterio.
+ * - 'date' nao corta nada e ordena cada dia do maior diametro para o menor.
  */
 export function filterAndSortAsteroids(
   asteroids: Asteroid[],
   { term, onlyHazardous, sortBy }: ListOptions,
 ): Asteroid[] {
-  const base = applyCommonFilters(asteroids, term, onlyHazardous)
+  let list = applyCommonFilters(asteroids, term, onlyHazardous)
 
+  // Corte por criterio (apenas nos modos de distancia e tamanho).
   if (sortBy === 'distance') {
-    // Apenas os que passaram a menos de 7,5 mi km, do mais proximo ao mais distante.
-    return base
-      .filter((a) => a.missDistanceKm > 0 && a.missDistanceKm < CLOSE_DISTANCE_KM)
-      .sort((a, b) => a.missDistanceKm - b.missDistanceKm)
+    list = list.filter(
+      (a) => a.missDistanceKm > 0 && a.missDistanceKm < CLOSE_DISTANCE_KM,
+    )
+  } else if (sortBy === 'size') {
+    list = list.filter((a) => a.diameterMaxKm > LARGE_DIAMETER_KM)
   }
 
-  if (sortBy === 'size') {
-    // Apenas os com diametro maximo acima de 0,14 km, do maior ao menor.
-    return base
-      .filter((a) => a.diameterMaxKm > LARGE_DIAMETER_KM)
-      .sort((a, b) => b.diameterMaxKm - a.diameterMaxKm)
-  }
-
-  // Padrao: mostra todos. Ordena por dia (mais recente primeiro) e, dentro do
-  // dia, do maior diametro para o menor. O agrupamento visual e feito na UI.
-  return [...base].sort((a, b) => {
+  return [...list].sort((a, b) => {
+    // 1o nivel (sempre): dia mais recente primeiro, para o agrupamento por dia.
     const byDay = b.approachDate.localeCompare(a.approachDate)
     if (byDay !== 0) return byDay
-    return b.diameterMaxKm - a.diameterMaxKm
+
+    // 2o nivel: criterio dentro de cada dia.
+    switch (sortBy) {
+      case 'distance':
+        return a.missDistanceKm - b.missDistanceKm // mais proximo primeiro
+      default:
+        return b.diameterMaxKm - a.diameterMaxKm // maior primeiro (padrao e size)
+    }
   })
 }
 
